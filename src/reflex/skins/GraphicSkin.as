@@ -38,14 +38,14 @@ package reflex.skins
 			}
 		}
 		
-		override public function set target(value:Sprite):void
+		override public function set target(value:DisplayObject):void
 		{
 			if (target == value) {
 				return;
 			}
 			
 			if (target != null && target != graphic) {
-				target.removeChild(graphic);
+				Sprite(target).removeChild(graphic);
 				_graphicBlock.anchor = null;
 			}
 			
@@ -57,7 +57,7 @@ package reflex.skins
 			}
 			
 			if (target != null && target != graphic) {
-				target.addChild(graphic);
+				Sprite(target).addChild(graphic);
 				_graphicBlock.anchor = 0;
 			}
 		}

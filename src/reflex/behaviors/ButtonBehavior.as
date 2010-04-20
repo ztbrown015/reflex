@@ -1,13 +1,14 @@
 package reflex.behaviors
 {
+	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
 	
 	import flight.binding.Bind;
 	
-	import reflex.skins.ISkinnable;
 	import reflex.events.ButtonEvent;
+	import reflex.skins.ISkinnable;
 	
 	[SkinState("up")]
 	[SkinState("over")]
@@ -15,7 +16,7 @@ package reflex.behaviors
 	
 	[Event(name="buttonDown", type="mx.events.FlexEvent")]
 	
-	public class ButtonBehavior extends Behavior implements IBehavior
+	public class ButtonBehavior extends Behavior
 	{
 		public static const UP:String = "up";
 		public static const OVER:String = "over";
@@ -30,13 +31,13 @@ package reflex.behaviors
 			super(target);
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		override public function set target(value:DisplayObject):void
 		{
 			if (value != null) {
 				if (value is DisplayObjectContainer) {
 					DisplayObjectContainer(value).mouseChildren = false;
 				}
-				ButtonEvent.initialize(value);
+				ButtonEvent.initialize(value as InteractiveObject);
 			}
 			super.target = value;
 		}

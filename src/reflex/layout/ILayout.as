@@ -1,12 +1,11 @@
 package reflex.layout
 {
 	import flash.display.DisplayObject;
+	
+	import reflex.IComposite;
 
-	public interface ILayout
+	public interface ILayout extends IComposite
 	{
-		function get target():DisplayObject;
-		function set target(value:DisplayObject):void;
-		
 		function get algorithm():ILayoutAlgorithm;
 		function set algorithm(value:ILayoutAlgorithm):void;
 		

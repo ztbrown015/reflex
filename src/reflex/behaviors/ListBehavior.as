@@ -1,5 +1,6 @@
 package reflex.behaviors
 {
+	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	
 	import reflex.skins.ISkin;
@@ -7,7 +8,10 @@ package reflex.behaviors
 
 	public class ListBehavior extends Behavior
 	{
+		[Binding(target="compositor.skin.hScrollBar")]
 		public var hScrollBar:InteractiveObject;
+		
+		[Binding(target="compositor.skin.vScrollBar")]
 		public var vScrollBar:InteractiveObject;
 		
 		private var hScrollBehavior:ScrollBehavior;
@@ -15,27 +19,20 @@ package reflex.behaviors
 		
 		public function ListBehavior()
 		{
-		}
-		
-		override public function set target(value:InteractiveObject):void
-		{
-			super.target = value;
-			
-			if (target == null) {
-				return;
-			}
-			
-			var skin:ISkin = ISkinnable(target).skin;
-			
-			hScrollBar = getSkinPart('hScrollBar');
-			vScrollBar = getSkinPart('vScrollBar');
-			
 			hScrollBehavior = new ScrollBehavior();
 			vScrollBehavior = new ScrollBehavior();
-			
+		}
+		
+		[PropertyListener(target="compositor.skin.hScrollBar")]
+		public function onHScrollChange(hScrollBar:InteractiveObject):void
+		{
 			hScrollBehavior.target = hScrollBar;
+		}
+		
+		[PropertyListener(target="compositor.skin.vScrollBar")]
+		public function onVScrollChange(vScrollBar:InteractiveObject):void
+		{
 			vScrollBehavior.target = vScrollBar;
-			
 		}
 	}
 }

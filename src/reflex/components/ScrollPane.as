@@ -56,7 +56,7 @@ package reflex.components
 			vPosition = scrollBarSkin.position = scrollBehavior.position = container.vPosition;
 			scrollBarSkin.graphicBlock.dock = Align.RIGHT;
 			
-			skin = new GraphicSkin(graphic);
+			compositor.skin = new GraphicSkin(graphic);
 		}
 		
 	}

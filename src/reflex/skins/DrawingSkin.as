@@ -1,6 +1,7 @@
 package reflex.skins
 {
 	import flash.display.Graphics;
+	import flash.display.Sprite;
 	import flash.geom.Matrix;
 	
 	import flight.binding.Bind;
@@ -36,8 +37,8 @@ package reflex.skins
 		
 		protected function onDraw(event:RenderEvent):void
 		{
-			if (target != null) {
-				redraw(target.graphics);
+			if (target != null && target is Graphics) {
+				redraw(Sprite(target).graphics);
 			}
 		}
 		

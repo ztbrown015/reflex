@@ -3,13 +3,11 @@ package reflex.skins
 	import flash.display.InteractiveObject;
 	import flash.display.Sprite;
 	
+	import reflex.IComposite;
 	import reflex.layout.ILayoutAlgorithm;
 	
-	public interface ISkin
+	public interface ISkin extends IComposite
 	{
-		function get target():Sprite;				// but I prefer ISkinnable targets, they're my favorite
-		function set target(value:Sprite):void;		// cause then I'll use data, children, layout, state, etc
-		
 		function get layout():ILayoutAlgorithm;
 		function set layout(value:ILayoutAlgorithm):void;
 		

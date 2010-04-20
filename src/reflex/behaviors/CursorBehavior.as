@@ -22,7 +22,7 @@ package reflex.behaviors
 		protected function cursorChange(cursor:Object):void
 		{
 			if (target) {
-				Cursor.useCursor(target, cursor);
+				Cursor.useCursor(target as InteractiveObject, cursor);
 			}
 		}
 		

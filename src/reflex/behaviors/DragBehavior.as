@@ -1,5 +1,6 @@
 package reflex.behaviors
 {
+	import flash.display.DisplayObject;
 	import flash.display.DisplayObjectContainer;
 	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
@@ -17,10 +18,10 @@ package reflex.behaviors
 			super(target);
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		override public function set target(value:DisplayObject):void
 		{
 			if (value != null) {
-				ButtonEvent.initialize(value);
+				ButtonEvent.initialize(value as InteractiveObject);
 			}
 			super.target = value;
 		}

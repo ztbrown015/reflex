@@ -3,7 +3,7 @@ package reflex.behaviors
 	import flash.display.InteractiveObject;
 	import flash.events.MouseEvent;
 
-	public class SelectableBehavior extends Behavior implements IBehavior
+	public class SelectableBehavior extends Behavior
 	{
 		[Bindable]
 		[Binding(target="target.selected")]

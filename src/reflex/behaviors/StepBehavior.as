@@ -1,5 +1,6 @@
 package reflex.behaviors
 {
+	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
 	
@@ -14,8 +15,11 @@ package reflex.behaviors
 		public var fwdBehavior:ButtonBehavior;
 		public var bwdBehavior:ButtonBehavior;
 		
+		[Binding(target="compositor.skin.fwdBtn")]
 		[Bindable]
 		public var fwdBtn:InteractiveObject;
+		
+		[Binding(target="compositor.skin.bwdBtn")]
 		[Bindable]
 		public var bwdBtn:InteractiveObject;
 		
@@ -26,27 +30,31 @@ package reflex.behaviors
 		public function StepBehavior(target:InteractiveObject = null)
 		{
 			super(target);
+			fwdBehavior = new ButtonBehavior();
+			bwdBehavior = new ButtonBehavior();
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		
+		[PropertyListener(target="compositor.skin.fwdBtn")]
+		public function onFwdBtnChange(fwdBtn:InteractiveObject):void
 		{
-			super.target = value;
-			
-			if (target == null) {
-				return;
-			}
-			
-			fwdBtn = getSkinPart("fwdBtn");
-			bwdBtn = getSkinPart("bwdBtn");
-			fwdBehavior = new ButtonBehavior(fwdBtn);
-			bwdBehavior = new ButtonBehavior(bwdBtn);
+			if (!fwdBtn) return;
+			fwdBehavior.target = fwdBtn;
 			if (fwdBtn is MovieClip) {
 				Bind.addListener(this, onFwdStateChange, fwdBehavior, "state");
 			}
+		}
+		
+		[PropertyListener(target="compositor.skin.bwdBtn")]
+		public function onBwdBtnChange(bwdBtn:InteractiveObject):void
+		{
+			if (!bwdBtn) return;
+			bwdBehavior.target = bwdBtn;
 			if (bwdBtn is MovieClip) {
 				Bind.addListener(this, onBwdStateChange, bwdBehavior, "state");
 			}
 		}
+		
 		
 		[EventListener(type="press", target="fwdBtn")]
 		[EventListener(type="hold", target="fwdBtn")]

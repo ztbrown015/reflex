@@ -40,7 +40,7 @@ package reflex.skins
 		
 		protected var containerPart:DisplayObjectContainer;
 		protected var defaultContainer:Boolean = true;
-		private var _target:Sprite;
+		private var _target:DisplayObject;
 		private var _children:IList = new ArrayList();
 		
 		public function Skin()
@@ -53,11 +53,11 @@ package reflex.skins
 		}
 		
 		[Bindable]
-		public function get target():Sprite
+		public function get target():DisplayObject
 		{
 			return _target;
 		}
-		public function set target(value:Sprite):void
+		public function set target(value:DisplayObject):void
 		{
 			if (_target == value) {
 				return;
@@ -72,10 +72,10 @@ package reflex.skins
 			var oldValue:Object = _target;
 			_target = value;
 			
-			if (_target != null) {
+			if (_target != null && _target is Sprite) {
 				var i:int;
 				for (i = 0; i < _children.length; i++) {
-					_target.addChildAt(_children.getItemAt(i) as DisplayObject, i);
+					Sprite(_target).addChildAt(_children.getItemAt(i) as DisplayObject, i);
 				}
 				
 				containerPart = getSkinPart("container") as DisplayObjectContainer;
@@ -127,7 +127,7 @@ package reflex.skins
 		
 		private function onChildrenChange(event:ListEvent):void
 		{
-			if (_target == null) {
+			if (_target == null || !(target is Sprite)) {
 				return;
 			}
 			var child:DisplayObject;
@@ -135,24 +135,24 @@ package reflex.skins
 			switch (event.kind) {
 				case ListEventKind.ADD :
 					for each (child in event.items) {
-						_target.addChildAt(child, loc++);
+						Sprite(_target).addChildAt(child, loc++);
 					}
 					break;
 				case ListEventKind.REMOVE :
 					for each (child in event.items) {
-					_target.removeChild(child);
+					Sprite(_target).removeChild(child);
 					}
 					break;
 				case ListEventKind.REPLACE :
-					_target.removeChild(event.items[1]);
-					_target.addChildAt(event.items[0], loc);
+					Sprite(_target).removeChild(event.items[1]);
+					Sprite(_target).addChildAt(event.items[0], loc);
 					break;
 				case ListEventKind.RESET :
-					while (_target.numChildren) {
-						_target.removeChildAt(_target.numChildren-1);
+					while (Sprite(_target).numChildren) {
+						Sprite(_target).removeChildAt(Sprite(_target).numChildren-1);
 					}
 					for (var i:int = 0; i < _children.length; i++) {
-						_target.addChildAt(_children.getItemAt(i) as DisplayObject, i);
+						Sprite(_target).addChildAt(_children.getItemAt(i) as DisplayObject, i);
 					}
 					break;
 			}

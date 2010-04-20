@@ -1,5 +1,6 @@
 package reflex.behaviors
 {
+	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
 	import flash.geom.Point;
@@ -8,7 +9,10 @@ package reflex.behaviors
 	
 	public class ScrollBehavior extends StepBehavior
 	{
+		[Binding(target="compositor.skin.track")]
 		public var track:InteractiveObject;
+		
+		[Binding(target="compositor.skin.thumb")]
 		public var thumb:InteractiveObject;
 		
 		[Bindable]
@@ -32,24 +36,23 @@ package reflex.behaviors
 			return _percent;
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		[PropertyListener(target="compositor.skin.track")]
+		public function onTrackChange(track:InteractiveObject):void
 		{
-			super.target = value;
+			if (!track) return;
 			
-			if (target == null) {
-				return;
-			}
-			
-			track = getSkinPart("track");
-			thumb = getSkinPart("thumb");
 			ButtonEvent.initialize(track);
-			ButtonEvent.initialize(thumb);
 			
 			if (track.width > track.height) {
 				horizontal = true;
 			}
-			
 			updatePosition();
+		}
+		
+		[PropertyListener(target="compositor.skin.thumb")]
+		public function onThumbChange(thumb:InteractiveObject):void
+		{
+			if (thumb) ButtonEvent.initialize(thumb);
 		}
 		
 		[PropertyListener(target="position.percent")]

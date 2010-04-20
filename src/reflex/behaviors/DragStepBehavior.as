@@ -1,5 +1,6 @@
 package reflex.behaviors
 {
+	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
@@ -23,7 +24,7 @@ package reflex.behaviors
 			super(target);
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		override public function set target(value:DisplayObject):void
 		{
 			super.target = value;
 			
@@ -31,7 +32,7 @@ package reflex.behaviors
 				return;
 			}
 			
-			ButtonEvent.initialize(target);
+			ButtonEvent.initialize(target as InteractiveObject);
 		}
 		
 		[EventListener(type="mouseDown", target="target")]

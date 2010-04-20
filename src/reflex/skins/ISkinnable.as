@@ -14,8 +14,5 @@ package reflex.skins
 		
 		function get state():String;
 		function set state(value:String):void;
-		
-		function get skin():ISkin;
-		function set skin(value:ISkin):void;
 	}
 }

@@ -1,13 +1,17 @@
 package reflex.behaviors
 {
 	
+	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	
 	import flight.binding.Bind;
+	import flight.observers.PropertyChange;
 	import flight.utils.Type;
 	
+	import reflex.Compositor;
+	import reflex.IComposite;
 	import reflex.skins.ISkinnable;
 	
 	/**
@@ -24,13 +28,12 @@ package reflex.behaviors
 	 * 3) common addon behaviors - general solutions for all components, or all
 	 * components of a type (eg TooltipBehavior)
 	 */
-	public class Behavior extends EventDispatcher implements IBehavior
+	public class Behavior extends EventDispatcher implements IComposite
 	{
-		/**
-		 * The object this behavior acts upon.
-		 */
+		private var _target:DisplayObject;
+		
 		[Bindable]
-		public var target:InteractiveObject;
+		public var compositor:Compositor;
 		
 		// TODO: add SkinParts with support for adding child behaviors to them
 		// registration of Behavior instances (via styling?) for instantiation
@@ -45,15 +48,22 @@ package reflex.behaviors
 			describeEventListeners(this);
 		}
 		
-		protected function getSkinPart(part:String):InteractiveObject
+		/**
+		 * The object this behavior acts upon.
+		 */
+		public function get target():DisplayObject
 		{
-			if (target is ISkinnable && ISkinnable(target).skin != null) {
-				return ISkinnable(target).skin.getSkinPart(part) as InteractiveObject;
-			} else if (part in target) {
-				return target[part] as InteractiveObject;
-			} else {
-				return null;
+			return _target;
+		}
+		
+		public function set target(value:DisplayObject):void
+		{
+			var change:PropertyChange = PropertyChange.begin();
+			_target = change.add(this, "target", _target, value);
+			if (change.hasChanged()) {
+				compositor = Compositor.get(_target);
 			}
+			change.commit();
 		}
 		
 		protected function bindProperty(target:String, source:String):void
@@ -73,7 +83,7 @@ package reflex.behaviors
 		}
 		
 		// parses [Binding(target="target.path")] metadata
-		public static function describeBindings(behavior:IBehavior):void
+		public static function describeBindings(behavior:IComposite):void
 		{
 			var desc:XMLList = Type.describeProperties(behavior, "Binding");
 			
@@ -92,7 +102,7 @@ package reflex.behaviors
 		}
 		
 		// parses [PropertyListener(target="target.path)] metadata
-		public static function describePropertyListeners(behavior:IBehavior):void
+		public static function describePropertyListeners(behavior:IComposite):void
 		{
 			var desc:XMLList = Type.describeMethods(behavior, "PropertyListener");
 			
@@ -111,7 +121,7 @@ package reflex.behaviors
 		}
 		
 		// parses [EventListener(type="eventType", target="target.path")] metadata
-		public static function describeEventListeners(behavior:IBehavior):void
+		public static function describeEventListeners(behavior:IComposite):void
 		{
 			var desc:XMLList = Type.describeMethods(behavior, "EventListener");
 			
