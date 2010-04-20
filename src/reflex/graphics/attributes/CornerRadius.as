@@ -55,6 +55,22 @@ package reflex.graphics.attributes
 			pool = this;
 		}
 		
+		public static function get(topLeft:Number = 0, topRight:Number = 0, bottomLeft:Number = 0, bottomRight:Number = 0):CornerRadius
+		{
+			var corners:CornerRadius = pool;
+			
+			if (corners) {
+				pool = corners.next;
+				corners.topLeft = topLeft;
+				corners.topRight = topRight;
+				corners.bottomLeft = bottomLeft;
+				corners.bottomRight = bottomRight;
+			} else {
+				corners = new CornerRadius(topLeft, topRight, bottomLeft, bottomRight);
+			}
+			
+			return corners;
+		}
 		
 		private static var numberRegex:RegExp = new RegExp("\\s+", "g");
 		
@@ -90,7 +106,7 @@ package reflex.graphics.attributes
 		
 		public function toString():String
 		{
-			return '[Edges(topLeft="' + topLeft + ', topRight="' + topRight + '", bottomLeft="' + bottomLeft + '", bottomRight="' + bottomRight + '")]'; 
+			return '[Corners(topLeft="' + topLeft + ', topRight="' + topRight + '", bottomLeft="' + bottomLeft + '", bottomRight="' + bottomRight + '")]'; 
 		}
 	}
 }

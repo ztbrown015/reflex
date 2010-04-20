@@ -167,7 +167,7 @@ package mx.styles
 		
 		protected static function propertyChange(target:Object, property:String, oldValue:*, newValue:*):void
 		{
-			trace(property, "has changed on", target);
+//			trace(property, "has changed on", target);
 			var changes:Object = targetChanges[target];
 			if (changes == null) {
 				targetChanges[target] = changes = {};
