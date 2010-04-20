@@ -16,11 +16,16 @@ package reflex.components
 	{
 		private var _state:String;
 		private var _data:Object;
-		protected var compositor:Compositor;
+		private var _style:Compositor;
 		
 		public function Component()
 		{
-			compositor = Compositor.get(this);
+			_style = Compositor.get(this);
+		}
+		
+		public function get style():Compositor
+		{
+			return _style;
 		}
 		
 		

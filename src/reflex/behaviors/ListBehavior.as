@@ -8,10 +8,10 @@ package reflex.behaviors
 
 	public class ListBehavior extends Behavior
 	{
-		[Binding(target="compositor.skin.hScrollBar")]
+		[Binding(target="style.skin.hScrollBar")]
 		public var hScrollBar:InteractiveObject;
 		
-		[Binding(target="compositor.skin.vScrollBar")]
+		[Binding(target="style.skin.vScrollBar")]
 		public var vScrollBar:InteractiveObject;
 		
 		private var hScrollBehavior:ScrollBehavior;
@@ -23,13 +23,13 @@ package reflex.behaviors
 			vScrollBehavior = new ScrollBehavior();
 		}
 		
-		[PropertyListener(target="compositor.skin.hScrollBar")]
+		[PropertyListener(target="style.skin.hScrollBar")]
 		public function onHScrollChange(hScrollBar:InteractiveObject):void
 		{
 			hScrollBehavior.target = hScrollBar;
 		}
 		
-		[PropertyListener(target="compositor.skin.vScrollBar")]
+		[PropertyListener(target="style.skin.vScrollBar")]
 		public function onVScrollChange(vScrollBar:InteractiveObject):void
 		{
 			vScrollBehavior.target = vScrollBar;

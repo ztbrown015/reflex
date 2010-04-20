@@ -33,7 +33,7 @@ package reflex.behaviors
 		private var _target:DisplayObject;
 		
 		[Bindable]
-		public var compositor:Compositor;
+		public var style:Compositor;
 		
 		// TODO: add SkinParts with support for adding child behaviors to them
 		// registration of Behavior instances (via styling?) for instantiation
@@ -61,7 +61,7 @@ package reflex.behaviors
 			var change:PropertyChange = PropertyChange.begin();
 			_target = change.add(this, "target", _target, value);
 			if (change.hasChanged()) {
-				compositor = Compositor.get(_target);
+				style = Compositor.get(_target);
 			}
 			change.commit();
 		}

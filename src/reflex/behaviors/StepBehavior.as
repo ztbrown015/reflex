@@ -15,11 +15,11 @@ package reflex.behaviors
 		public var fwdBehavior:ButtonBehavior;
 		public var bwdBehavior:ButtonBehavior;
 		
-		[Binding(target="compositor.skin.fwdBtn")]
+		[Binding(target="style.skin.fwdBtn")]
 		[Bindable]
 		public var fwdBtn:InteractiveObject;
 		
-		[Binding(target="compositor.skin.bwdBtn")]
+		[Binding(target="style.skin.bwdBtn")]
 		[Bindable]
 		public var bwdBtn:InteractiveObject;
 		
@@ -35,7 +35,7 @@ package reflex.behaviors
 		}
 		
 		
-		[PropertyListener(target="compositor.skin.fwdBtn")]
+		[PropertyListener(target="style.skin.fwdBtn")]
 		public function onFwdBtnChange(fwdBtn:InteractiveObject):void
 		{
 			if (!fwdBtn) return;
@@ -45,7 +45,7 @@ package reflex.behaviors
 			}
 		}
 		
-		[PropertyListener(target="compositor.skin.bwdBtn")]
+		[PropertyListener(target="style.skin.bwdBtn")]
 		public function onBwdBtnChange(bwdBtn:InteractiveObject):void
 		{
 			if (!bwdBtn) return;

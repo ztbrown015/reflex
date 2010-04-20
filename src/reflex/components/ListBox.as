@@ -25,7 +25,7 @@ package reflex.components
 		override protected function init():void
 		{
 			var listBoxSkin:ListBoxSkin = new ListBoxSkin();
-			compositor.skin = listBoxSkin;
+			style.skin = listBoxSkin;
 			position = listBoxSkin.position;
 			
 			Bind.addBinding(listBoxSkin, "template", this, "template", true);

@@ -9,10 +9,10 @@ package reflex.behaviors
 	
 	public class ScrollBehavior extends StepBehavior
 	{
-		[Binding(target="compositor.skin.track")]
+		[Binding(target="style.skin.track")]
 		public var track:InteractiveObject;
 		
-		[Binding(target="compositor.skin.thumb")]
+		[Binding(target="style.skin.thumb")]
 		public var thumb:InteractiveObject;
 		
 		[Bindable]
@@ -36,7 +36,7 @@ package reflex.behaviors
 			return _percent;
 		}
 		
-		[PropertyListener(target="compositor.skin.track")]
+		[PropertyListener(target="style.skin.track")]
 		public function onTrackChange(track:InteractiveObject):void
 		{
 			if (!track) return;
@@ -49,7 +49,7 @@ package reflex.behaviors
 			updatePosition();
 		}
 		
-		[PropertyListener(target="compositor.skin.thumb")]
+		[PropertyListener(target="style.skin.thumb")]
 		public function onThumbChange(thumb:InteractiveObject):void
 		{
 			if (thumb) ButtonEvent.initialize(thumb);

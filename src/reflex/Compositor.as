@@ -45,7 +45,7 @@ package reflex
 		public function Compositor(target:DisplayObject)
 		{
 			if (!instantiating) {
-				throw new Error("Don't create Compositor directly. Must use Compositor.get(target).");
+				throw new Error("Don't create Compositor directly. Use Compositor.get(target).");
 			}
 			_target = target;
 			PropertyChange.addHook(this, "*", null, convertClasses);

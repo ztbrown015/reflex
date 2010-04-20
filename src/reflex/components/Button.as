@@ -15,8 +15,8 @@ package reflex.components
 		public function Button()
 		{
 			var buttonSkin:ButtonSkin = new ButtonSkin();
-			compositor.skin = buttonSkin;
-			compositor.buttonBehavior = new ButtonBehavior();
+			style.skin = buttonSkin;
+			style.buttonBehavior = new ButtonBehavior();
 			state = ButtonBehavior.UP;
 		}
 		

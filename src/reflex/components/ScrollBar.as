@@ -17,9 +17,9 @@ package reflex.components
 		override protected function init():void
 		{
 			var scrollBarSkin:ScrollBarSkin = new ScrollBarSkin();
-			compositor.skin = scrollBarSkin;
+			style.skin = scrollBarSkin;
 			var scrollBehavior:ScrollBehavior = new ScrollBehavior(this);
-			compositor.scrollBehavior = scrollBehavior;
+			style.scrollBehavior = scrollBehavior;
 			position = scrollBarSkin.position = scrollBehavior.position;
 		}
 		
