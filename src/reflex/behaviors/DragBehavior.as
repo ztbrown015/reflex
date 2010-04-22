@@ -16,6 +16,7 @@ package reflex.behaviors
 		public function DragBehavior(target:InteractiveObject=null)
 		{
 			super(target);
+			name = "dragBehavior";
 		}
 		
 		override public function set target(value:DisplayObject):void

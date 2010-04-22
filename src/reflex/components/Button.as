@@ -14,10 +14,10 @@ package reflex.components
 		
 		public function Button()
 		{
-			var buttonSkin:ButtonSkin = new ButtonSkin();
-			style.skin = buttonSkin;
-			style.buttonBehavior = new ButtonBehavior();
-			state = ButtonBehavior.UP;
+//			var buttonSkin:ButtonSkin = new ButtonSkin();
+//			style.skin = buttonSkin;
+//			style.buttonBehavior = new ButtonBehavior();
+//			state = ButtonBehavior.UP;
 		}
 		
 		override protected function init():void

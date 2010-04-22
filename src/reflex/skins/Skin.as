@@ -29,6 +29,8 @@ package reflex.skins
 	{
 		public static const DRAW:String = "draw";
 		
+		private var _name:String = "skin";
+		
 		[Bindable]
 		public var layout:ILayoutAlgorithm;
 		
@@ -50,6 +52,11 @@ package reflex.skins
 			Bind.addListener(this, onLayoutChange, this, "layout");
 			Bind.addBinding(this, "data", this, "target.data");
 			Bind.addBinding(this, "state", this, "target.state");
+		}
+		
+		public function get name():String
+		{
+			return _name;
 		}
 		
 		[Bindable]

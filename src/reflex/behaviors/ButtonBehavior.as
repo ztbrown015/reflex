@@ -29,6 +29,7 @@ package reflex.behaviors
 		public function ButtonBehavior(target:InteractiveObject = null)
 		{
 			super(target);
+			name = "buttonBehavior";
 		}
 		
 		override public function set target(value:DisplayObject):void

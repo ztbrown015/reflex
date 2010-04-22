@@ -30,6 +30,8 @@ package reflex.layout
 		private static var measurePhase:Boolean = RenderEvent.registerPhase(MEASURE, 0x80, false);
 		private static var layoutPhase:Boolean = RenderEvent.registerPhase(LAYOUT, 0x40, true);
 		
+		private var _name:String = "layout";
+		
 		[Bindable]
 		public var freeform:Boolean = false;
 		
@@ -53,6 +55,11 @@ package reflex.layout
 		{
 			reference[this] = true;		// used to maintain a weak-reference
 			this.target = target;
+		}
+		
+		public function get name():String
+		{
+			return _name;
 		}
 		
 		[Bindable(event="targetChange")]

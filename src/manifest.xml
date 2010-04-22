@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <componentPackage>
 	
+	<component id="Compositor" class="reflex.Compositor"/>
+	<component id="Prop" class="reflex.Prop"/>
+	
 	<component id="Container" class="reflex.display.Container"/>
 	<component id="ScrollContainer" class="reflex.display.ScrollContainer"/>
 	<component id="Application" class="reflex.components.Application"/>

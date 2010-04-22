@@ -30,6 +30,7 @@ package reflex.behaviors
 	 */
 	public class Behavior extends EventDispatcher implements IComposite
 	{
+		private var _name:String;
 		private var _target:DisplayObject;
 		
 		[Bindable]
@@ -46,6 +47,16 @@ package reflex.behaviors
 			describeBindings(this);
 			describePropertyListeners(this);
 			describeEventListeners(this);
+		}
+		
+		public function get name():String
+		{
+			return _name;
+		}
+		
+		public function set name(value:String):void
+		{
+			_name = value;
 		}
 		
 		/**

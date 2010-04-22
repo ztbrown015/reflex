@@ -21,6 +21,7 @@ package reflex.behaviors
 		{
 			hScrollBehavior = new ScrollBehavior();
 			vScrollBehavior = new ScrollBehavior();
+			name = "listBehavior";
 		}
 		
 		[PropertyListener(target="style.skin.hScrollBar")]

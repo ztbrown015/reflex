@@ -11,6 +11,9 @@ package reflex.display
 	import flight.list.ArrayList;
 	import flight.list.IList;
 	
+	import reflex.Compositor;
+	import reflex.IComposite;
+	import reflex.Prop;
 	import reflex.layout.Block;
 	import reflex.layout.Bounds;
 	import reflex.layout.Box;
@@ -27,15 +30,30 @@ package reflex.display
 		
 		public var block:Block;
 		
+		private var _style:Compositor;
 		private var _background:Number;
 		private var _children:IList = new ArrayList();
 		
 		// TODO: add propertyChange updates (via Block as well)
 		public function Container()
 		{
+			_style = Compositor.get(this);
 			initLayout();
 			addEventListener(Event.ADDED, onInit);
 			_children.addEventListener(ListEvent.LIST_CHANGE, onChildrenChange);
+		}
+		
+		public function get style():Compositor
+		{
+			return _style;
+		}
+		
+		[ArrayElementType("reflex.IComposite")]
+		public function set style(value:*):void
+		{
+			for each (var composite:IComposite in value) {
+				_style[composite.name] = composite is Prop ? Prop(composite).value : composite;
+			}
 		}
 		
 		[Bindable(event="backgroundChange")]

@@ -28,6 +28,7 @@ package reflex.behaviors
 		public function ScrollBehavior(target:InteractiveObject = null)
 		{
 			super(target);
+			name = "scrollBehavior";
 		}
 		
 		[Bindable(event="percentChange")]

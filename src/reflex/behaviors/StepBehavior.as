@@ -32,6 +32,7 @@ package reflex.behaviors
 			super(target);
 			fwdBehavior = new ButtonBehavior();
 			bwdBehavior = new ButtonBehavior();
+			name = "stepBehavior";
 		}
 		
 		

@@ -12,6 +12,7 @@ package reflex.behaviors
 		public function SelectableBehavior(target:InteractiveObject = null)
 		{
 			super(target);
+			name = "selectableBehavior";
 		}
 		
 		

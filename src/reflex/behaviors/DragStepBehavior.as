@@ -22,6 +22,7 @@ package reflex.behaviors
 		public function DragStepBehavior(target:InteractiveObject = null)
 		{
 			super(target);
+			name = "dragStepBehavior";
 		}
 		
 		override public function set target(value:DisplayObject):void

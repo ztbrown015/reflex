@@ -17,6 +17,7 @@ package reflex.behaviors
 			super(target);
 			Bind.addListener(this, cursorChange, this, "cursor");
 			Bind.addListener(this, targetChange, this, "target");
+			name = "cursorBehavior";
 		}
 		
 		protected function cursorChange(cursor:Object):void

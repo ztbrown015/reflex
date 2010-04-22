@@ -42,7 +42,7 @@ package reflex
 		protected var explicits:Object = {};
 		protected var implicits:Object = {};
 		
-		public function Compositor(target:DisplayObject)
+		public function Compositor(target:DisplayObject = null)
 		{
 			if (!instantiating) {
 				throw new Error("Don't create Compositor directly. Use Compositor.get(target).");
