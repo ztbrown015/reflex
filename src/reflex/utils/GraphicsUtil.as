@@ -6,6 +6,8 @@ package reflex.utils
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	
+	import reflex.skins.ISkin;
+	
 	public class GraphicsUtil
 	{
 		
@@ -31,7 +33,10 @@ package reflex.utils
 				return (target as Shape).graphics;
 			} else if(target is Graphics) {
 				return target as Graphics;
-			} else {
+			} else if(target is ISkin && ISkin(target).target){
+        return ISkin(target).target.graphics;
+      }
+      else {
 				return null;
 			}
 		}
