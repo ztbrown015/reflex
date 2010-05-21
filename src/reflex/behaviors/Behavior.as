@@ -8,6 +8,9 @@ package reflex.behaviors
 	import flight.binding.Bind;
 	import flight.utils.Type;
 	
+	import reflex.metadata.resolveBindings;
+	import reflex.metadata.resolveEventListeners;
+	import reflex.metadata.resolvePropertyListeners;
 	import reflex.skins.ISkinnable;
 	
 	/**
@@ -23,6 +26,7 @@ package reflex.behaviors
 	 * the component (eg ReorderTabBehavior)
 	 * 3) common addon behaviors - general solutions for all components, or all
 	 * components of a type (eg TooltipBehavior)
+	 * @alpha
 	 */
 	public class Behavior extends EventDispatcher implements IBehavior
 	{
@@ -30,19 +34,19 @@ package reflex.behaviors
 		 * The object this behavior acts upon.
 		 */
 		[Bindable]
-		public var target:InteractiveObject;
+		public var target:IEventDispatcher;
 		
 		// TODO: add SkinParts with support for adding child behaviors to them
 		// registration of Behavior instances (via styling?) for instantiation
 		// skins ability to pull behavior data for state and other use
 		// skins also need data such as labels and images? (localization?)
 		// and dynamic data for it's content-area (component children)
-		public function Behavior(target:InteractiveObject = null)
+		public function Behavior(target:IEventDispatcher = null)
 		{
 			this.target = target;
-			describeBindings(this);
-			describePropertyListeners(this);
-			describeEventListeners(this);
+			reflex.metadata.resolveBindings(this);
+			reflex.metadata.resolvePropertyListeners(this);
+			reflex.metadata.resolveEventListeners(this);
 		}
 		
 		protected function getSkinPart(part:String):InteractiveObject
@@ -55,7 +59,7 @@ package reflex.behaviors
 				return null;
 			}
 		}
-		
+		/*
 		protected function bindProperty(target:String, source:String):void
 		{
 			Bind.addBinding(this, target, this, source, true);
@@ -71,7 +75,8 @@ package reflex.behaviors
 		{
 			Bind.bindEventListener(type, listener, this, target, useCapture, priority, useWeakReference);
 		}
-		
+		*/
+		/*
 		// parses [Binding(target="target.path")] metadata
 		public static function describeBindings(behavior:IBehavior):void
 		{
@@ -129,6 +134,6 @@ package reflex.behaviors
 				}
 			}
 		}
-		
+		*/
 	}
 }

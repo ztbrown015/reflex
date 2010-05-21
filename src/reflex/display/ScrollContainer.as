@@ -10,18 +10,20 @@ package reflex.display
 	public class ScrollContainer extends Container
 	{
 		[Bindable]
-		public var hPosition:IPosition;
+		public var horizontal:IPosition;
 		
 		[Bindable]
-		public var vPosition:IPosition;
+		public var vertical:IPosition;
 		
+		/*
 		override public function set background(value:Number):void
 		{
 			super.background = value;
 			opaqueBackground = background;
 			cacheAsBitmap = !isNaN(background);
 		}
-		
+		*/
+		/*
 		override public function get width():Number
 		{
 			return block.width;
@@ -39,8 +41,8 @@ package reflex.display
 		{
 			block.height = value;
 		}
-		
-		override protected function initLayout():void
+		*/
+		/*override *//*protected function initLayout():void
 		{
 			var scrollBlock:ScrollBlock = new ScrollBlock();
 			hPosition = scrollBlock.hPosition;
@@ -62,7 +64,7 @@ package reflex.display
 			scrollBlock.addEventListener("dockChange", forwardEvent);
 			scrollBlock.addEventListener("alignChange", forwardEvent);
 			
-			block = scrollBlock;
+			//block = scrollBlock;
 		}
 		
 		private function forwardEvent(event:Event):void
@@ -78,6 +80,6 @@ package reflex.display
 		private function onHeightChange(event:Event):void
 		{
 			dispatchEvent( new Event("heightChange") );
-		}
+		}*/
 	}
 }

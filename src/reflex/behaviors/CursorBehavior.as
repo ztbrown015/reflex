@@ -5,14 +5,14 @@ package reflex.behaviors
 	
 	import flight.binding.Bind;
 	
-	import reflex.ui.Cursor;
+	import reflex.cursors.Cursor;
 	
 	public class CursorBehavior extends Behavior
 	{
 		[Bindable]
 		public var cursor:Object;
 		
-		public function CursorBehavior(target:InteractiveObject=null)
+		public function CursorBehavior(target:IEventDispatcher=null)
 		{
 			super(target);
 			Bind.addListener(this, cursorChange, this, "cursor");

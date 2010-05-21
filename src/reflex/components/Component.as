@@ -1,23 +1,44 @@
 package reflex.components
 {
+	import flash.display.DisplayObject;
+	
 	import flight.events.PropertyEvent;
 	import flight.observers.PropertyChange;
+	
+	import mx.utils.ObjectProxy;
 	
 	import reflex.behaviors.CompositeBehavior;
 	import reflex.behaviors.IBehavior;
 	import reflex.behaviors.IBehavioral;
 	import reflex.display.Container;
-	import reflex.layout.ILayoutAlgorithm;
+	import reflex.display.ReflexDisplay;
+	import reflex.events.InvalidationEvent;
+	import reflex.measurement.resolveHeight;
+	import reflex.measurement.resolveWidth;
 	import reflex.skins.ISkin;
 	import reflex.skins.ISkinnable;
 	
-	public class Component extends Container implements IBehavioral, ISkinnable
+	[Style(name="left")]
+	[Style(name="right")]
+	[Style(name="top")]
+	[Style(name="bottom")]
+	[Style(name="horizontalCenter")]
+	[Style(name="verticalCenter")]
+	[Style(name="dock")]
+	[Style(name="align")]
+	
+	/**
+	 * @alpha
+	 */
+	public class Component extends ReflexDisplay implements IBehavioral, ISkinnable
 	{
+		
+		static public const MEASURE:String = "measure";
+		InvalidationEvent.registerPhase(MEASURE, 0, true);
+		
 		private var _state:String;
-		private var _data:Object;
-		private var _skin:ISkin;
+		private var _skin:Object;
 		private var _behaviors:CompositeBehavior;
-		private var _layout:ILayoutAlgorithm;
 		
 		public function Component()
 		{
@@ -25,40 +46,34 @@ package reflex.components
 			PropertyChange.addObserver(this, "skin", this, setTarget);
 		}
 		
-		override public function get layout():ILayoutAlgorithm
-		{
-			return _skin.layout;
-		}
-		override public function set layout(value:ILayoutAlgorithm):void
-		{
-			var change:PropertyChange = PropertyChange.begin();
-			_skin.layout = change.add(this, "layout", _skin.layout, value);
-			change.commit();
+		[Bindable] private var _style:ObjectProxy = new ObjectProxy();
+		public function get style():Object { return _style; }
+		public function set style(value:*):void {
+			if(value is String) {
+				var token:String = value as String;
+				var assignments:Array = token.split(";");
+				for each(var assignment:String in assignments) {
+					var split:Array = assignment.split(":");
+					var property:String = split[0];
+					var v:String = split[1];
+					_style[property] = v;
+				}
+			}
 		}
 		
+		public function setStyle(property:String, value:*):void {
+			style[property] = value;
+		}
 		
 		[Bindable]
-		public function get state():String
+		public function get currentState():String
 		{
 			return _state;
 		}
-		public function set state(value:String):void
+		public function set currentState(value:String):void
 		{
 			var change:PropertyChange = PropertyChange.begin();
-			_state = change.add(this, "state", _state, value);
-			change.commit();
-		}
-		
-		
-		[Bindable]
-		public function get data():Object
-		{
-			return _data;
-		}
-		public function set data(value:Object):void
-		{
-			var change:PropertyChange = PropertyChange.begin();
-			_data = change.add(this, "data", _data, value);
+			_state = change.add(this, "currentState", _state, value);
 			change.commit();
 		}
 		
@@ -96,14 +111,15 @@ package reflex.components
 		}
 		
 		[Bindable]
-		public function get skin():ISkin
+		public function get skin():Object
 		{
 			return _skin;
 		}
-		public function set skin(value:ISkin):void
+		public function set skin(value:Object):void
 		{
 			var change:PropertyChange = PropertyChange.begin();
 			_skin = change.add(this, "skin", _skin, value);
+			//setSize(getWidth(_skin), getHeight(_skin));
 			change.commit();
 		}
 		
@@ -113,15 +129,10 @@ package reflex.components
 				oldValue.target = null;
 			}
 			
-			if (newValue != null) {
+			if (newValue is ISkin) {
 				newValue.target = this;
-			}
-		}
-		
-		override protected function constructChildren():void
-		{
-			if (skin == null) {	// else skin was set in mxml
-				// load skin from CSS, etc
+			} else if(newValue is DisplayObject) {
+				addChild(newValue as DisplayObject);
 			}
 		}
 		

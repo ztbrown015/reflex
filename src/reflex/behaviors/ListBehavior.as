@@ -1,6 +1,7 @@
 package reflex.behaviors
 {
 	import flash.display.InteractiveObject;
+	import flash.events.IEventDispatcher;
 	
 	import reflex.skins.ISkin;
 	import reflex.skins.ISkinnable;
@@ -17,7 +18,7 @@ package reflex.behaviors
 		{
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		override public function set target(value:IEventDispatcher):void
 		{
 			super.target = value;
 			
@@ -25,7 +26,7 @@ package reflex.behaviors
 				return;
 			}
 			
-			var skin:ISkin = ISkinnable(target).skin;
+			//var skin:ISkin = ISkinnable(target).skin;
 			
 			hScrollBar = getSkinPart('hScrollBar');
 			vScrollBar = getSkinPart('vScrollBar');

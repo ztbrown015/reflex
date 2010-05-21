@@ -2,16 +2,24 @@ package reflex.behaviors
 {
 	import flash.display.InteractiveObject;
 	import flash.events.Event;
+	import flash.events.IEventDispatcher;
 	import flash.geom.Point;
 	
 	import flight.position.IPosition;
 	import flight.position.Position;
 	
 	import reflex.events.ButtonEvent;
+	import reflex.measurement.resolveHeight;
 	
 	public class SlideBehavior extends Behavior// extends StepBehavior
 	{
+		
+		[Bindable]
+		[Binding(target="target.skin.track")]
 		public var track:InteractiveObject;
+		
+		[Bindable]
+		[Binding(target="target.skin.thumb")]
 		public var thumb:InteractiveObject;
 		
 		[Bindable]
@@ -39,7 +47,7 @@ package reflex.behaviors
 			return _percent;
 		}
 		
-		override public function set target(value:InteractiveObject):void
+		override public function set target(value:IEventDispatcher):void
 		{
 			super.target = value;
 			
@@ -49,14 +57,15 @@ package reflex.behaviors
 			
 			track = getSkinPart("track");
 			thumb = getSkinPart("thumb");
-			ButtonEvent.initialize(track);
-			ButtonEvent.initialize(thumb);
+			if(track) { ButtonEvent.initialize(track); }
+			if(thumb) { ButtonEvent.initialize(thumb); }
 			
-			if (track.width > track.height) {
+			if (track && track.width > track.height) {
 				horizontal = true;
 			}
-			
-			updatePosition();
+			if(track && thumb) {
+				updatePosition();
+			}
 		}
 		
 		[PropertyListener(target="position.percent")]
@@ -145,15 +154,20 @@ package reflex.behaviors
 		
 		protected function updatePosition():void
 		{
-			var p:Point = new Point();
-			if (horizontal) {
-				p.x = (track.width - thumb.width) * _percent + track.x;
-				p = thumb.parent.globalToLocal( track.parent.localToGlobal(p) );
-				thumb.x = Math.round(p.x);
-			} else {
-				p.y = (track.height - thumb.height) * _percent + track.y;
-				p = thumb.parent.globalToLocal( track.parent.localToGlobal(p) );
-				thumb.y = Math.round(p.y);
+			if(track && thumb) {
+				var p:Point = new Point();
+				
+				if (horizontal) {
+					p.x = (track.width - thumb.width) * _percent + track.x;
+					p = thumb.parent.globalToLocal( track.parent.localToGlobal(p) );
+					thumb.x = Math.round(p.x);
+				} else {
+					var trackHeight:Number = reflex.measurement.resolveHeight(track);
+					var thumbHeight:Number = reflex.measurement.resolveHeight(thumb);
+					p.y = (trackHeight - thumbHeight) * _percent + track.y;
+					p = thumb.parent.globalToLocal( track.parent.localToGlobal(p) );
+					thumb.y = Math.round(p.y);
+				}
 			}
 		}
 		
