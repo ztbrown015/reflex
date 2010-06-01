@@ -14,6 +14,7 @@ package reflex.tools.flashbuilder
   import flash.net.URLLoaderDataFormat;
   import flash.net.URLRequest;
   import flash.utils.Dictionary;
+  import flash.utils.getDefinitionByName;
   import flash.utils.setTimeout;
   
   import mx.core.CrossDomainRSLItem;
@@ -25,7 +26,7 @@ package reflex.tools.flashbuilder
   import reflex.tools.flash.SWFPreloader;
   
   // TODO: resolve error in Flex4: 1144: Interface method callInContext in namespace mx.core:IFlexModuleFactory is implemented with an incompatible signature in class reflex.tools.flashbuilder:ReflexApplicationLoader.
-  public class ReflexApplicationLoader extends ReflexFlashLoader// implements IFlexModuleFactory
+  public class ReflexApplicationLoader extends ReflexFlashLoader implements IFlexModuleFactory
   {
     public function ReflexApplicationLoader()
     {
@@ -86,7 +87,16 @@ package reflex.tools.flashbuilder
     
     override protected function initializeApplication():void
     {
-      // Caste with 'as' because create() can possibly return 'null',
+      var mixins:Array = info()['mixins'];
+      while(mixins.length)
+      {
+        try{
+          getDefinitionByName(mixins.pop())['init'](this);
+        }
+        catch(e:Error){ /* Don't care! */ }
+      }
+      
+      // Cast with 'as' because create() can possibly return 'null',
       // and casting 'null' to a DisplayObject will throw an error
       var app:DisplayObject = create() as DisplayObject;
       

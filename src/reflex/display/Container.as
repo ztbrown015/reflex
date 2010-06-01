@@ -52,9 +52,9 @@ package reflex.display
 		public function Container()
 		{
 			_template = new ReflexDataTemplate();
-			addEventListener(Event.ADDED, onAdded, false, 0, true);
-			addEventListener(MEASURE, onMeasure, false, 0, true);
-			addEventListener(LAYOUT, onLayout, false, 0, true);
+			addEventListener(Event.ADDED, onAdded);
+			addEventListener(MEASURE, onMeasure);
+			addEventListener(LAYOUT, onLayout);
 		}
 		
 		[ArrayElementType("Object")]

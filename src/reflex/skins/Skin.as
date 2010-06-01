@@ -20,12 +20,14 @@ package reflex.skins
 	import reflex.display.IContainer;
 	import reflex.display.ReflexDataTemplate;
 	import reflex.display.addItemsAt;
+	import reflex.events.IStateUtility;
 	import reflex.events.InvalidationEvent;
 	import reflex.layout.LayoutWrapper;
 	import reflex.layouts.ILayout;
 	import reflex.measurement.IMeasurable;
 	import reflex.measurement.resolveHeight;
 	import reflex.measurement.resolveWidth;
+	import reflex.utils.UtilityMap;
 	
 	/**
 	 * Skin is a convenient base class for many skins, a swappable graphical
@@ -67,6 +69,7 @@ package reflex.skins
 		private var _currentState:String; [Bindable]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void {
+      UtilityMap.resolve(IStateUtility, "change", this, _currentState, value);
 			_currentState = value;
 		}
 		
@@ -162,6 +165,7 @@ package reflex.skins
 				target.addEventListener(LAYOUT, onLayout, false, 0, true);
 				InvalidationEvent.invalidate(target, MEASURE);
 				InvalidationEvent.invalidate(target, LAYOUT);
+        Bind.addBinding(this, "currentState", target, "currentState", true);
 			}
 			
 			PropertyEvent.dispatchChange(this, "target", oldValue, _target);

@@ -5,7 +5,7 @@ package reflex.graphics
 	public interface IDrawable
 	{
 		function set target(value:Object):void;
-		function invalidate():void;
+//		function invalidate():void;
 		function render():void;
 	}
 }

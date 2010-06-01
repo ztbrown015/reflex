@@ -11,8 +11,9 @@ package reflex.components
 	import reflex.display.Container;
 	import reflex.events.InvalidationEvent;
 	import reflex.layout.LayoutWrapper;
-	
-	//[Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
+	import reflex.utils.ReflexUtilities; ReflexUtilities;
+
+	[Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
 	
 	/**
@@ -24,9 +25,18 @@ package reflex.components
 		public function Application()
 		{
 			super();
+      
+      addEventListener(CREATE, onCreate);
+		}
+    
+    private function onCreate(event:InvalidationEvent):void
+    {
 			if (stage == null) {
 				return;
 			}
+      
+      InvalidationEvent.invalidate(this, MEASURE);
+      InvalidationEvent.invalidate(this, LAYOUT);
 			
 			//contextMenu = new ContextMenu();
 			//contextMenu.hideBuiltInItems();
@@ -34,7 +44,7 @@ package reflex.components
 			stage.align = StageAlign.TOP_LEFT;
 			stage.addEventListener(Event.RESIZE, onStageResize, false, 0, true);
 			onStageResize(null);
-		}
+    }
 		
 		private function onStageResize(event:Event):void
 		{

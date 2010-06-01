@@ -13,7 +13,7 @@ package
 	{
 		import mx.core.IMXMLObject;						IMXMLObject;
 		import mx.core.IFlexModuleFactory;				IFlexModuleFactory;
-		
+    
 		//import mx.collections.IList;					IList;
 		
 		// binding references for use of the [Bindable] metadata tag
