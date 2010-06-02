@@ -35,9 +35,6 @@ package reflex.components
 				return;
 			}
       
-      InvalidationEvent.invalidate(this, MEASURE);
-      InvalidationEvent.invalidate(this, LAYOUT);
-			
 			//contextMenu = new ContextMenu();
 			//contextMenu.hideBuiltInItems();
 			stage.scaleMode = StageScaleMode.NO_SCALE;
