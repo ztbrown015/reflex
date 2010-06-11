@@ -9,7 +9,7 @@
   import reflex.behaviors.IBehavioral;
   import reflex.display.Container;
   import reflex.display.addItem;
-  import reflex.events.IStateUtility;
+  import reflex.utilities.IStateUtility;
   import reflex.skins.ISkin;
   import reflex.skins.ISkinnable;
   import reflex.styles.IStyleAware;

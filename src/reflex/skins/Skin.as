@@ -20,7 +20,7 @@ package reflex.skins
 	import reflex.display.IContainer;
 	import reflex.display.ReflexDataTemplate;
 	import reflex.display.addItemsAt;
-	import reflex.events.IStateUtility;
+	import reflex.utilities.IStateUtility;
 	import reflex.events.InvalidationEvent;
 	import reflex.layout.LayoutWrapper;
 	import reflex.layouts.ILayout;
