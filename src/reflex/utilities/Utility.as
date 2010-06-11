@@ -6,19 +6,24 @@ package reflex.utilities
   {
     private static const implMap:Dictionary = new Dictionary(false);
     
-    public static function registerUtility(forAPI:Class, implInstance:Object):void
+    public static function registerUtility(forAPI:Object, impl:Object):void
     {
-      implMap[forAPI.toString()] = implInstance;
+      implMap[getName(forAPI)] = impl;
     }
     
-    public static function getUtility(forAPI:Class):Object
+    public static function getUtility(forAPI:Object):Object
     {
-      var impl:Object;
+      var name:String = getName(forAPI);
       
-      if(forAPI.toString() in implMap)
-        impl = implMap[forAPI.toString()];
+      if(name in implMap)
+        return implMap[name];
       
-      return forAPI(impl);
+      return null;
+    }
+    
+    private static function getName(forObject:Object):String
+    {
+      return (forObject is Class) ? forObject.toString() : '[class ' + forObject.toString() + ']';
     }
     
     /**
@@ -26,18 +31,18 @@ package reflex.utilities
     * Pass in SomeInterface.functionToResolve as the first parameter and it
     * will call functionToResolve on the registered impl for SomeInterface.
     */
-    public static function resolve(resolveFunc:String, ...params):*
+    public static function resolve(resolvePath:String, ...params):*
     {
-      var impl:Object = getUtility(resolveFunc.split('.').shift());
+      var obj:Array = resolvePath.split('.');
+      var method:String = obj.pop();
+      var className:String = obj.pop();
       
-      resolveFunc = resolveFunc.split('.').pop();
+      var impl:Object = getUtility(className);
       
-      if(!impl || !(resolveFunc in impl))
+      if(!impl || !(method in impl) || !(impl[method] is Function))
         return;
       
-      var func:Function = (impl[resolveFunc] as Function);
-      
-      return func.apply(null, params);
+      return (impl[method] as Function).apply(null, params);
     }
   }
 }

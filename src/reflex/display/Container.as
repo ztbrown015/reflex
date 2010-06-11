@@ -1,51 +1,50 @@
 package reflex.display
 {
-  import flash.display.DisplayObject;
   import flash.events.Event;
   import flash.events.EventPhase;
   import flash.geom.Point;
-  import flash.geom.Rectangle;
-  
-  import flight.events.ListEvent;
-  import flight.events.ListEventKind;
-  import flight.list.ArrayList;
-  import flight.list.IList;
   
   import reflex.events.InvalidationEvent;
   import reflex.layouts.ILayout;
-  import reflex.measurement.resolveHeight;
-  import reflex.measurement.resolveWidth;
+  import reflex.utilities.Utility;
+  import reflex.utilities.invalidation.IInvalidationUtility;
+  import reflex.utilities.oneShot;
   
-  [Event(name="initialize", type="reflex.events.InvalidationEvent")]
-  
+  ////
+  // Default property that MXML sets when you define children MXML nodes.
+  ////
   [DefaultProperty("children")]
+  
+  ////
+  // Events this class dispatches. Update this list as it grows.
+  ////
+  [Event(name="childrenChanged", type="Event")]
+  [Event(name="layoutChanged", type="Event")]
   
   /**
    * @alpha
    */
-  public class Container extends ReflexDisplay implements IContainer
+  public class Container extends ReflexDisplay implements IContainer, IInvalidating
   {
-    static public const CREATE:String = "create";
-    static public const INITIALIZE:String = "initialize";
-    static public const MEASURE:String = "measure";
-    static public const LAYOUT:String = "layout";
-    
-//    InvalidationEvent.registerPhase(CREATE, 0, true);
-//    InvalidationEvent.registerPhase(INITIALIZE, 1, true);
-//    InvalidationEvent.registerPhase(MEASURE, 2, true);
-//    InvalidationEvent.registerPhase(LAYOUT, 3, false);
-    
     public function Container()
     {
       addEventListener(Event.ADDED, onAdded);
-      //TODO: Add this back in later.
-//      addEventListener(MEASURE, onMeasure);
-//      addEventListener(LAYOUT, onLayout);
+    }
+    
+    private function onAdded(event:Event):void
+    {
+      if(event.eventPhase != EventPhase.AT_TARGET)
+        return;
+      
+      removeEventListener(Event.ADDED, onAdded);
     }
     
     private var _children:Array;
+    private var childrenChanged:Boolean = false;
     
+    [Bindable(event="childrenChanged")]
     [ArrayElementType("Object")]
+    
     public function get children():Array
     {
       return _children;
@@ -57,9 +56,17 @@ package reflex.display
         removeChildAt(0);
       
       _children = [].concat(values);
+      
+      childrenChanged = true;
+      
+      invalidateNotifications();
+      invalidateChildren();
     }
     
     private var _layout:ILayout;
+    private var layoutChanged:Boolean = false;
+    
+    [Bindable(event="layoutChanged")]
     
     public function get layout():ILayout
     {
@@ -68,6 +75,9 @@ package reflex.display
     
     public function set layout(value:ILayout):void
     {
+      if(_layout == value)
+        return;
+      
       if(layout)
         removeLayout(layout)
       
@@ -76,9 +86,10 @@ package reflex.display
       if(layout)
         applyLayout(layout);
       
-      //TODO: Add this back in later.
-//      InvalidationEvent.invalidate(this, MEASURE);
-//      InvalidationEvent.invalidate(this, LAYOUT);
+      layoutChanged = true;
+      
+      invalidateNotifications();
+      invalidateLayout();
     }
     
     protected function applyLayout(layout:ILayout):void
@@ -91,16 +102,97 @@ package reflex.display
       layout.target = null;
     }
     
-    private function onAdded(event:Event):void
+    override public function set width(value:Number):void
     {
-      if(event.eventPhase != EventPhase.AT_TARGET)
+      super.width = value;
+      
+      if(_width != value)
+        invalidateSize();
+    }
+    
+    override public function set height(value:Number):void
+    {
+      super.height = value;
+      
+      if(_height != value)
+        invalidateSize();
+    }
+    
+    public function invalidateNotifications():void
+    {
+      DisplayPhases.invalidateNotifications(this, onNotifyPhase);
+    }
+    
+    /**
+     * Synchronizes dispatching the binding events so that anyone who cares
+     * (such as Behaviors) will update and calculate only once per frame.
+     * @alpha
+     */
+    protected function onNotifyPhase():void
+    {
+      if(childrenChanged)
+        dispatchEvent(new Event("childrenChanged"));
+      childrenChanged = false;
+      
+      if(layoutChanged)
+        dispatchEvent(new Event("layoutChanged"));
+      layoutChanged = false;
+    }
+    
+    public function invalidateChildren():void
+    {
+      DisplayPhases.invalidateChildren(this, onChildrenPhase);
+    }
+    
+    protected function onChildrenPhase():void
+    {
+      
+    }
+    
+    public function invalidateSize():void
+    {
+      DisplayPhases.invalidateSize(this, onMeasurePhase);
+    }
+    
+    protected function onMeasurePhase():void
+    {
+      // Don't bother sizing if we've got an explicitWidth and explicitHeight -- it's not allowed to change.
+      if(!isNaN(explicitWidth) && !isNaN(explicitHeight))
+      {
+        _width = explicitWidth;
+        _height = explicitHeight;
+        return;
+      }
+      
+      if(isNaN(percentWidth))
+        _width = explicitWidth;
+      if(isNaN(percentHeight))
+        _height = explicitHeight;
+      
+      if(!layout)
         return;
       
-      removeEventListener(Event.ADDED, onAdded);
+      var size:Point = layout.measure(children);
       
-      //TODO: Add this back in later.
-//      InvalidationEvent.invalidate(this, CREATE);
-//      InvalidationEvent.invalidate(this, INITIALIZE);
+      if(isNaN(explicitWidth) && isNaN(percentWidth))
+        _width = size.x;
+      if(isNaN(explicitHeight) && isNaN(percentHeight))
+        _height = size.y;
     }
+    
+    public function invalidateLayout():void
+    {
+      DisplayPhases.invalidateLayout(this, onLayoutPhase);
+    }
+    
+    protected function onLayoutPhase():void
+    {
+      if(!layout)
+        return;
+      
+      layout.update(children, getBounds(this));
+    }
+    
+    DisplayPhases;
   }
 }

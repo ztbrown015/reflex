@@ -1,52 +1,44 @@
 package reflex.components
 {
-	import flash.display.StageAlign;
-	import flash.display.StageQuality;
-	import flash.display.StageScaleMode;
-	import flash.events.Event;
-	import flash.geom.PerspectiveProjection;
-	import flash.geom.Point;
-	import flash.ui.ContextMenu;
-	
-	import reflex.display.Container;
-	import reflex.events.InvalidationEvent;
-	import reflex.layout.LayoutWrapper;
-	import reflex.utilities.ReflexDefaults; ReflexDefaults;
-
-	[Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
-	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
-	
-	/**
-	 * @alpha
-	 */
-	public class Application extends Container
-	{
-		
-		public function Application()
-		{
-			super();
-      
-      addEventListener(CREATE, onCreate);
-		}
+  import flash.display.StageAlign;
+  import flash.display.StageScaleMode;
+  import flash.events.Event;
+  import flash.events.EventPhase;
+  
+  import reflex.display.Container;
+  import reflex.utilities.ReflexDefaults; ReflexDefaults;
+  
+  [Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
+  
+  /**
+   * @alpha
+   */
+  public class Application extends Container
+  {
     
-    private function onCreate(event:InvalidationEvent):void
+    public function Application()
     {
-			if (stage == null) {
-				return;
-			}
+      super();
       
-			//contextMenu = new ContextMenu();
-			//contextMenu.hideBuiltInItems();
-			stage.scaleMode = StageScaleMode.NO_SCALE;
-			stage.align = StageAlign.TOP_LEFT;
-			stage.addEventListener(Event.RESIZE, onStageResize, false, 0, true);
-			onStageResize(null);
+      addEventListener(Event.ADDED, onAdded);
     }
-		
-		private function onStageResize(event:Event):void
-		{
-			width = stage.stageWidth;
-			height = stage.stageHeight;
-		}
-	}
+    
+    private function onAdded(event:Event):void
+    {
+      if(event.eventPhase != EventPhase.AT_TARGET)
+        return;
+      
+      //contextMenu = new ContextMenu();
+      //contextMenu.hideBuiltInItems();
+      stage.scaleMode = StageScaleMode.NO_SCALE;
+      stage.align = StageAlign.TOP_LEFT;
+      stage.addEventListener(Event.RESIZE, onStageResize);
+    }
+    
+    private function onStageResize(event:Event):void
+    {
+      width = stage.stageWidth;
+      height = stage.stageHeight;
+    }
+  }
 }

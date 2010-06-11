@@ -18,5 +18,8 @@ package reflex.skins
 		 */
 		function get skin():Object;
 		function set skin(value:Object):void;
+    
+    function addSkinPart(part:Object, name:String):Object;
+    function removeSkinPart(part:Object, name:String):Object;
 	}
 }

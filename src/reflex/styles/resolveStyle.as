@@ -1,12 +1,11 @@
 package reflex.styles
 {
-	public function resolveStyle(child:Object, property:String, type:Object = null, standard:* = null):Object
-	{
-		if(child.hasOwnProperty("style") && child["style"] != null) {
-			return child.style[property];
-		} else {
-			return standard;
-		}
-	}
-	
+  public function resolveStyle(child:Object, property:String, standard:* = null):Object
+  {
+    if('style' in child && child['style'] != null)
+      return child['style'][property];
+    
+    return standard;
+  }
+
 }

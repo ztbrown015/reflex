@@ -8,13 +8,15 @@ package reflex.graphics
   
   import flight.events.PropertyEvent;
   
-  import reflex.events.RenderEvent;
-  import reflex.layout.Layout;
+  import reflex.display.Container;
+  import reflex.display.DisplayPhases;
+  import reflex.events.InvalidationEvent;
+  import reflex.utilities.Utility;
+  import reflex.utilities.invalidation.IInvalidationUtility;
+  import reflex.utilities.oneShot;
 
   public class Graphic extends EventDispatcher implements IDrawable
   {
-    RenderEvent.registerPhase(Layout.LAYOUT, 0x40, true);
-    
     public function Graphic(target:Object = null)
     {
       this.target = target;
@@ -298,11 +300,11 @@ package reflex.graphics
       if(!target)
         return;
       
-      RenderEvent.invalidate(target as DisplayObject, Layout.LAYOUT);
-      IEventDispatcher(target).addEventListener(Layout.LAYOUT, onRender);
+      Utility.resolve(<>IInvalidationUtility.invalidate</>, target, DisplayPhases.LAYOUT);
+      IEventDispatcher(target).addEventListener(DisplayPhases.LAYOUT, oneShot(onRender, target as IEventDispatcher));
     }
     
-    private function onRender(event:RenderEvent):void
+    private function onRender(event:InvalidationEvent):void
     {
       render();
     }
@@ -330,5 +332,7 @@ package reflex.graphics
       shape.visible = visible;
       return shape;
     }
+    
+    DisplayPhases;
   }
 }

@@ -9,7 +9,11 @@ package reflex.layout
   
   import flight.events.PropertyEvent;
   
-  import reflex.events.InvalidationEvent;
+  import reflex.display.Container;
+  import reflex.display.DisplayPhases;
+  import reflex.utilities.Utility;
+  import reflex.utilities.invalidation.IInvalidationUtility;
+  import reflex.utilities.oneShot;
   
   public class LayoutWrapper implements IEventDispatcher, ILayoutWrapper
   {
@@ -29,8 +33,8 @@ package reflex.layout
       return null;
     }
     
-    private static var measurePhase:Boolean = InvalidationEvent.registerPhase(MEASURE, 0x80, false);
-    private static var layoutPhase:Boolean = InvalidationEvent.registerPhase(LAYOUT, 0x40, true);
+    //Doing this will register the right measure/layout phases.
+    Container;
     
     [Bindable]
     public var freeform:Boolean = false;
@@ -72,8 +76,8 @@ package reflex.layout
       
       if(_target != null)
       {
-        _target.removeEventListener(MEASURE, onMeasure);
-        _target.removeEventListener(LAYOUT, onLayout);
+//        _target.removeEventListener(MEASURE, onMeasure);
+//        _target.removeEventListener(LAYOUT, onLayout);
         delete layoutIndex[_target];
       }
       
@@ -82,8 +86,8 @@ package reflex.layout
       
       if(_target != null)
       {
-        _target.addEventListener(MEASURE, onMeasure, false, 0xF, true);
-        _target.addEventListener(LAYOUT, onLayout, false, 0xF, true);
+//        _target.addEventListener(MEASURE, onMeasure, false, 0xF, true);
+//        _target.addEventListener(LAYOUT, onLayout, false, 0xF, true);
         if(layoutIndex[_target] != null)
         {
           getLayout(_target).target = null;
@@ -104,11 +108,13 @@ package reflex.layout
         return;
       }
       
-      InvalidationEvent.invalidate(_target, LAYOUT);
+      target.addEventListener(DisplayPhases.LAYOUT, oneShot(onLayout, target));
+      Utility.resolve(<>IInvalidationUtility.invalidate</>, target, DisplayPhases.LAYOUT);
       
       if(children)
       {
-        InvalidationEvent.invalidate(_target, MEASURE);
+        target.addEventListener(DisplayPhases.MEASURE, oneShot(onMeasure, target));
+        Utility.resolve(<>IInvalidationUtility.invalidate</>, target, DisplayPhases.MEASURE);
       }
       else
       {

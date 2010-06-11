@@ -1,4 +1,4 @@
-package reflex.utilities
+package reflex.utilities.states
 {
   import mx.core.IStateClient2;
 

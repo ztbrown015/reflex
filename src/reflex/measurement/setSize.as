@@ -1,17 +1,17 @@
 package reflex.measurement
 {
-	import reflex.display.ReflexDisplay;
-	import reflex.graphics.Rect;
+  import reflex.display.ReflexDisplay;
 
-	public function setSize(child:Object, width:Number, height:Number):void
-	{
-		// update to interface later of course
-		if(child is ReflexDisplay || child is Rect) {
-			child.setSize(width, height);
-		} else {
-			child.width = width;
-			child.height = height;
-		}
-	}
-	
+  public function setSize(child:Object, newWidth:Number, newHeight:Number):void
+  {
+    if(child is ReflexDisplay)
+      ReflexDisplay(child).setSize(newWidth, newHeight);
+    else
+    {
+      if('width' in child)
+        child['width'] = newWidth;
+      if('height' in child)
+        child['height'] = newHeight;
+    }
+  }
 }

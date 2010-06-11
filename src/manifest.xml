@@ -45,7 +45,7 @@
 	<component id="DockLayout" class="reflex.layouts.DockLayout"/>-->
 	
 	<!-- measurement -->
-	<component id="Measurements" class="reflex.measurement.Measurements"/>
+	<!--component id="Measurements" class="reflex.measurement.Measurements"/-->
 	
 	<!-- graphics -->
 	<component id="IDrawable" class="reflex.graphics.IDrawable"/>

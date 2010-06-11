@@ -9,7 +9,6 @@ package reflex.layouts
 	 */
 	public interface ILayout
 	{
-		
 		function get target():IEventDispatcher;
 		function set target(value:IEventDispatcher):void;
 		

@@ -1,10 +1,7 @@
 package reflex.text
 {
 	import flash.events.Event;
-	import flash.events.KeyboardEvent;
-	import flash.geom.Rectangle;
 	import flash.text.AntiAliasType;
-	import flash.text.TextExtent;
 	import flash.text.TextField;
 	import flash.text.TextFieldType;
 	import flash.text.TextFormat;
@@ -13,21 +10,16 @@ package reflex.text
 	import flight.binding.Bind;
 	import flight.observers.PropertyChange;
 	
-	import mx.events.ScrollEvent;
-	
 	import reflex.events.InvalidationEvent;
 	import reflex.layout.Block;
 	import reflex.layout.Bounds;
 	import reflex.layout.Box;
 	import reflex.layout.ILayoutAlgorithm;
 	import reflex.layout.LayoutWrapper;
-	
+  TextPhases;
 	
 	public class Text extends TextField
 	{
-		public static const TEXT_CHANGE:String = "textChange";
-		InvalidationEvent.registerPhase(TEXT_CHANGE, 0x90); // before measure
-		
 		[Bindable]
 		public var freeform:Boolean = false;
 		
@@ -52,12 +44,16 @@ package reflex.text
 			addEventListener(LayoutWrapper.LAYOUT, onRender);
 			
 			addEventListener(Event.CHANGE, onChange);
-			addEventListener(TEXT_CHANGE, onTextChange);
 		}
 		
+    protected function invalidateText():void
+    {
+      TextPhases.invalidateText(this, onTextChange);
+    }
+    
 		private function onChange(event:Event):void
 		{
-			InvalidationEvent.invalidate(this, TEXT_CHANGE);
+      invalidateText()
 		}
 		
 		private function onTextChange(event:InvalidationEvent):void
@@ -139,13 +135,13 @@ package reflex.text
 		override public function set text(value:String):void
 		{
 			super.text = value;
-			InvalidationEvent.invalidate(this, TEXT_CHANGE);
+      invalidateText()
 		}
 		
 		override public function set htmlText(value:String):void
 		{
 			super.htmlText = value;
-			InvalidationEvent.invalidate(this, TEXT_CHANGE);
+      invalidateText();
 		}
 		
 		public function get font():String

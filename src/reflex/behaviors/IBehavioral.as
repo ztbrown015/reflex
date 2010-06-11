@@ -2,7 +2,7 @@ package reflex.behaviors
 {
   public interface IBehavioral
   {
-    function get behaviors():CompositeBehavior;
-    function set behaviors(...values):void;
+    function get behaviors():*;
+    function set behaviors(... values):void;
   }
 }

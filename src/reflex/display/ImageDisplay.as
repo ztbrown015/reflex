@@ -1,55 +1,49 @@
 package reflex.display
 {
-	import flash.display.Loader;
-	import flash.events.Event;
-	import flash.net.URLRequest;
-	
-	import reflex.events.InvalidationEvent;
-	
-	public class ImageDisplay extends ReflexDisplay
-	{
-		
-		public static const MEASURE:String = "measure";
-		public static const SOURCE_CHANGED:String = "sourceChanged";
-		
-		InvalidationEvent.registerPhase(SOURCE_CHANGED, 0, true);
-		
-		private var loader:Loader;
-		
-		private var _source:Object;
-		
-		[Bindable(event="sourceChange")]
-		public function get source():Object { return _source; }
-		public function set source(value:Object):void {
-			_source = value;
-			InvalidationEvent.invalidate(this, SOURCE_CHANGED);
-			dispatchEvent(new Event("sourceChange"));
-		}
-		
-		public function ImageDisplay()
-		{
-			super();
-			addEventListener(SOURCE_CHANGED, onSourceChanged, false, 0, true);
-			addEventListener(MEASURE, onMeasure, false, 0, true);
-		}
-		
-		private function onSourceChanged(event:InvalidationEvent):void {
-			var request:URLRequest = new URLRequest(source as String);
-			loader = new Loader();
-			loader.load(request);
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete, false, 0, true);
-		}
-		
-		private function onComplete(event:Event):void {
-			measurements.measuredWidth = loader.content.width;
-			measurements.measuredHeight = loader.content.height;
-			setSize(measurements.measuredWidth, measurements.measuredHeight);
-			addChild(loader);
-		}
-		
-		private function onMeasure(event:InvalidationEvent):void {
-			
-		}
-		
-	}
+  import flash.display.Loader;
+  import flash.events.Event;
+  import flash.net.URLRequest;
+  
+  import reflex.events.InvalidationEvent;
+  import reflex.utilities.Utility;
+  import reflex.utilities.invalidation.IInvalidationUtility;
+  import reflex.utilities.oneShot;
+  
+  public class ImageDisplay extends ReflexDisplay
+  {
+    private var loader:Loader;
+    private var _source:Object;
+    
+    public function get source():Object
+    {
+      return _source;
+    }
+    
+    public function set source(value:Object):void
+    {
+      if(source === value)
+        return;
+      
+      _source = value;
+      addEventListener(SOURCE_CHANGED, oneShot(onSourceChanged, this));
+      Utility.resolve(<>IInvalidationUtility.invalidate</>, this, SOURCE_CHANGED);
+    }
+    
+    private function onSourceChanged(event:InvalidationEvent):void
+    {
+      var request:URLRequest = new URLRequest(source as String);
+      loader = new Loader();
+      loader.load(request);
+      loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete, false, 0, true);
+    }
+    
+    private function onComplete(event:Event):void
+    {
+      setSize(loader.content.width, loader.content.height);
+      addChild(loader);
+    }
+    
+    public static const SOURCE_CHANGED:String = "sourceChanged";
+    Utility.resolve(<>IInvalidationUtility.registerPhase</>, SOURCE_CHANGED);
+  }
 }

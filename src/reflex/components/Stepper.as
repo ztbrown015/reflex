@@ -18,7 +18,7 @@ package reflex.components
 			position.min = 0;
 			position.max = 100;
 			skin = new StepperSkin();
-			behaviors = new StepBehavior();
+			behaviors = [new StepBehavior()];
 		}
 		
 		/*override */protected function init():void

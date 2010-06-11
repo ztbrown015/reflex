@@ -1,4 +1,4 @@
-package reflex.utilities
+package reflex.utilities.invalidation
 {
   import flash.display.DisplayObject;
   import flash.display.Stage;
@@ -6,6 +6,7 @@ package reflex.utilities
   import flash.events.EventPhase;
   import flash.events.IEventDispatcher;
   import flash.utils.Dictionary;
+  import flash.utils.setTimeout;
 
   /**
   * All credit to Tyler Wright (http://xtyler.com) for this utility.
@@ -30,14 +31,14 @@ package reflex.utilities
     private var depths:Dictionary = new Dictionary(true);
     private var rendering:Boolean = false;
     
-    public function invalidate(element:DisplayObject, name:String):void
+    public function invalidate(element:DisplayObject, name:String):Boolean
     {
       if(!(phaseIndex[name]))
         throw new ArgumentError("DisplayObject cannot be invalidated in unknown phase '" + name + "'.");
       
       var phase:ValidationPhase = phaseIndex[name];
       if(phase.hasElement(element))
-        return;
+        return false;
       
       var hasStage:Boolean = element.stage != null;
       
@@ -50,12 +51,14 @@ package reflex.utilities
       phase.addElement(element, hasStage ? depth : -1);
       
       if(!hasStage)
-        return;
+        return false;
       
       if(!rendering)
         invalidateStage(element.stage);
       else if((phase.ascending && depth <= phase.depth) || (!phase.ascending && depth >= phase.depth))
         setTimeout(invalidateStage, 0, element.stage);
+      
+      return true;
     }
     
     public function render():void
@@ -236,8 +239,8 @@ internal class ValidationPhase
     if(depths[depth] == null)
       depths[depth] = new Dictionary(true);
     
-    depths[depth][display] = true;
-    invalidated[display] = depth;
+    depths[depth][element] = true;
+    invalidated[element] = depth;
   }
   
   public function removeElement(element:DisplayObject):void
@@ -248,6 +251,6 @@ internal class ValidationPhase
   
   public function hasElement(element:DisplayObject):Boolean
   {
-    return invalidated[display];
+    return invalidated[element];
   }
 }

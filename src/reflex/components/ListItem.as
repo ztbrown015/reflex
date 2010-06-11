@@ -20,7 +20,7 @@ package reflex.components
 		
 		public function ListItem()
 		{
-			behaviors = new ButtonBehavior();
+			behaviors = [new ButtonBehavior()];
 			skin = new ButtonGraphic();
 		}
 	}

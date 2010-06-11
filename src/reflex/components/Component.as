@@ -1,20 +1,20 @@
 ﻿package reflex.components
 {
   import flash.display.DisplayObject;
+  import flash.events.Event;
   
   import mx.core.IStateClient2;
   
   import reflex.behaviors.CompositeBehavior;
-  import reflex.behaviors.IBehavior;
   import reflex.behaviors.IBehavioral;
   import reflex.display.Container;
-  import reflex.display.addItem;
-  import reflex.utilities.IStateUtility;
+  import reflex.events.InvalidationEvent;
   import reflex.skins.ISkin;
   import reflex.skins.ISkinnable;
   import reflex.styles.IStyleAware;
   import reflex.styles.StyleAwareActor;
   import reflex.utilities.Utility;
+  import reflex.utilities.states.IStateUtility;
   
   [Style(name="left")]
   [Style(name="right")]
@@ -36,7 +36,8 @@
     }
     
     private var _behaviors:CompositeBehavior;
-    
+    private var behaviorsChanged:Boolean = false;
+    [Bindable(event="behaviorsChanged")]
     [ArrayElementType("reflex.behaviors.IBehavior")]
     [Inspectable(name="Behaviors", type="Array")]
     /**
@@ -53,7 +54,7 @@
      *   &lt;/behaviors&gt;
      * &lt;/Component&gt;
      */
-    public function get behaviors():CompositeBehavior
+    public function get behaviors():*
     {
       return _behaviors;
     }
@@ -62,9 +63,15 @@
     {
       behaviors.clear();
       behaviors.add(values);
+      
+      behaviorsChanged = true;
+      
+      invalidateNotifications();
     }
     
     private var _currentState:String;
+    private var currentStateChanged:Boolean = false;
+    [Bindable(event="currentStateChanged")]
     
     public function get currentState():String
     {
@@ -76,9 +83,13 @@
       if(_currentState == value)
         return;
       
-      Utility.resolve(<>IStateUtility.change</>, _currentState, value);
+      Utility.resolve(<>IStateUtility.change</>, this, _currentState, value);
       
       _currentState = value;
+      
+      currentStateChanged = true;
+      
+      invalidateNotifications();
     }
     
     private var _states:Array;
@@ -94,10 +105,13 @@
         return;
       
       _states = value;
+      
+      invalidateNotifications();
     }
     
     private var _skin:Object;
-    
+    private var skinChanged:Boolean = false;
+    [Bindable(event="skinChanged")]
     [Inspectable(name="Skin", type="General")]
     
     public function get skin():Object
@@ -117,29 +131,55 @@
       
       if(skin)
         attachSkin(skin);
+      
+      skinChanged = true;
+      
+      invalidateNotifications();
+    }
+    
+    public function addSkinPart(part:Object, name:String):Object
+    {
+      if(name in this)
+        this[name] = part;
+      
+      if(part is DisplayObject)
+        addChild(DisplayObject(part));
+      
+      return part;
+    }
+    
+    public function removeSkinPart(part:Object, name:String):Object
+    {
+      if(name in this)
+        this[name] = null;
+      
+      if(part is DisplayObject)
+        removeChild(DisplayObject(part));
+      
+      return part;
     }
     
     protected function attachSkin(skin:Object):void
     {
       if(skin is ISkin)
         ISkin(skin).target = this;
-      else if(skin is DisplayObject)
-        addChild(DisplayObject(skin));
+      else
+        addSkinPart(skin, 'skin');
     }
     
     protected function removeSkin(skin:Object):void
     {
       if(skin is ISkin)
         ISkin(skin).target = null;
-      else if(skin is DisplayObject)
-        removeChild(DisplayObject(skin));
+      else
+        removeSkinPart(skin, 'skin');
     }
     
     protected var _style:IStyleAware = new StyleAwareActor();
     
     public function get style():Object
     {
-      return _style.style;
+      return _style;
     }
     
     public function set style(styleObject:Object):void
@@ -163,6 +203,23 @@
     public function setStyle(styleProp:String, newValue:*):void
     {
       style.setStyle(styleProp, newValue);
+    }
+    
+    override protected function onNotifyPhase():void
+    {
+      super.onNotifyPhase();
+      
+      if(behaviorsChanged)
+        dispatchEvent(new Event("behaviorsChanged"));
+      behaviorsChanged = false;
+      
+      if(skinChanged)
+        dispatchEvent(new Event("skinChanged"));
+      skinChanged = false;
+      
+      if(currentStateChanged)
+        dispatchEvent(new Event("currentStateChanged"));
+      currentStateChanged = false;
     }
   }
 }

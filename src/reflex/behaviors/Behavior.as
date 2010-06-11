@@ -2,17 +2,13 @@
 {
 	
 	import flash.display.InteractiveObject;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
-	import flash.events.Event;
 	
-	import flight.binding.Bind;
-	import flight.utils.Type;
-	
-	import reflex.metadata.resolveBindings;
-	import reflex.metadata.resolveEventListeners;
-	import reflex.metadata.resolvePropertyListeners;
 	import reflex.skins.ISkinnable;
+	import reflex.utilities.Utility;
+	import reflex.utilities.metadata.IMetadataUtility;
 	
 	/**
 	 * Behavior is a convenient base class for various behavior implementations.
@@ -52,9 +48,10 @@
 		public function Behavior(target:IEventDispatcher = null)
 		{
 			this.target = target;
-			reflex.metadata.resolveBindings(this);
-			reflex.metadata.resolvePropertyListeners(this);
-			reflex.metadata.resolveEventListeners(this);
+      
+      Utility.resolve(<>IMetadataUtility.resolveBindings</>, this);
+      Utility.resolve(<>IMetadataUtility.resolvePropertyListeners</>, this);
+      Utility.resolve(<>IMetadataUtility.resolveEventListeners</>, this);
 		}
 		
 		protected function getSkinPart(part:String):InteractiveObject

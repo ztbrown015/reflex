@@ -18,7 +18,7 @@ package reflex.components
 	public class List extends Component
 	{
 		
-		[Bindable] public var layout:ILayout;
+//		[Bindable] public var layout:ILayout;
 		[Bindable] public var position:IPosition;
 		[Bindable] public var template:Object;
 		[Bindable] public var dataProvider:IList;

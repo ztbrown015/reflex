@@ -102,7 +102,7 @@
       return _percentHeight;
     }
     
-    public function get percentHeight(value:Number):void
+    public function set percentHeight(value:Number):void
     {
       if(_percentHeight == value)
         return;
@@ -116,7 +116,7 @@
      */
     public function setSize(width:Number, height:Number):void
     {
-      _wdith = width;
+      _width = width;
       _height = height;
     }
   }

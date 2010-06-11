@@ -1,4 +1,4 @@
-package reflex.events
+package reflex.utilities.states
 {
   import mx.core.IStateClient2;
   import mx.core.mx_internal;
@@ -7,16 +7,11 @@ package reflex.events
   
   use namespace mx_internal;
   
-  public class StateEvent extends StateChangeEvent
+  public class StateUtility implements IStateUtility
   {
-    public function StateEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false, oldState:String=null, newState:String=null)
+    public function change(client:IStateClient2, from:String, to:String):void
     {
-      super(type, bubbles, cancelable, oldState, newState);
-    }
-    
-    public static function change(client:IStateClient2, from:String, to:String):void
-    {
-      StateEvent.client = client;
+      this.client = client;
       
       var base:String = findCommonBaseState(from, to);
       
@@ -26,12 +21,12 @@ package reflex.events
       
       applyState(to, base);
       
-      StateEvent.client = null;
+      this.client = null;
     }
     
-    private static var client:IStateClient2;
+    private var client:IStateClient2;
     
-    private static function getState(name:String):State
+    private function getState(name:String):State
     {
       for each(var state:State in client.states)
       {
@@ -42,12 +37,12 @@ package reflex.events
       return null;
     }
     
-    private static function isBaseState(stateName:String):Boolean
+    private function isBaseState(stateName:String):Boolean
     {
       return !stateName || stateName == "";
     }
     
-    private static function getBaseStates(state:State):Array
+    private function getBaseStates(state:State):Array
     {
       var baseStates:Array = [];
       
@@ -61,7 +56,7 @@ package reflex.events
       return baseStates;
     }
     
-    private static function findCommonBaseState(from:String, to:String):String
+    private function findCommonBaseState(from:String, to:String):String
     {
       var firstState:State = getState(from);
       var secondState:State = getState(to);
@@ -95,7 +90,7 @@ package reflex.events
       return commonBase;
     }
     
-    private static function initializeState(stateName:String):void
+    private function initializeState(stateName:String):void
     {
       var state:State = getState(stateName);
       while(state)
@@ -105,7 +100,7 @@ package reflex.events
       }
     }
     
-    private static function removeState(stateName:String, lastStateName:String):void
+    private function removeState(stateName:String, lastStateName:String):void
     {
       var state:State = getState(stateName);
       var overrides:Array;
@@ -131,7 +126,7 @@ package reflex.events
       }
     }
     
-    private static function applyState(stateName:String, lastStateName:String):void
+    private function applyState(stateName:String, lastStateName:String):void
     {
       var state:State = getState(stateName);
       var overrides:Array;
