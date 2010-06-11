@@ -11,7 +11,7 @@ package reflex.components
 	import reflex.display.Container;
 	import reflex.events.InvalidationEvent;
 	import reflex.layout.LayoutWrapper;
-	import reflex.utils.ReflexUtilities; ReflexUtilities;
+	import reflex.utilities.ReflexUtilities; ReflexUtilities;
 
 	[Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
 	[SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]

@@ -27,7 +27,7 @@ package reflex.skins
 	import reflex.measurement.IMeasurable;
 	import reflex.measurement.resolveHeight;
 	import reflex.measurement.resolveWidth;
-	import reflex.utils.Utility;
+	import reflex.utilities.Utility;
 	
 	/**
 	 * Skin is a convenient base class for many skins, a swappable graphical

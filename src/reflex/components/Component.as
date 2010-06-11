@@ -14,7 +14,7 @@
   import reflex.skins.ISkinnable;
   import reflex.styles.IStyleAware;
   import reflex.styles.StyleAwareActor;
-  import reflex.utils.Utility;
+  import reflex.utilities.Utility;
   
   [Style(name="left")]
   [Style(name="right")]

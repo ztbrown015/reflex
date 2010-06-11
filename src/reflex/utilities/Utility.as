@@ -1,4 +1,4 @@
-package reflex.utils
+package reflex.utilities
 {
   import flash.utils.Dictionary;
 
