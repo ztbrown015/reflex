@@ -9,11 +9,6 @@ package reflex.utilities
   
   public class StateUtility implements IStateUtility
   {
-    public function StateUtility()
-    {
-      super();
-    }
-    
     public function change(client:IStateClient2, from:String, to:String):void
     {
       this.client = client;

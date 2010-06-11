@@ -8,22 +8,29 @@ package reflex.utilities
     
     public static function registerUtility(forAPI:Class, implInstance:Object):void
     {
-      implMap[forAPI] = implInstance;
+      implMap[forAPI.toString()] = implInstance;
     }
     
     public static function getUtility(forAPI:Class):Object
     {
       var impl:Object;
       
-      if(forAPI in implMap)
-        impl = implMap[forAPI];
+      if(forAPI.toString() in implMap)
+        impl = implMap[forAPI.toString()];
       
       return forAPI(impl);
     }
     
-    public static function resolve(forAPI:Class, resolveFunc:String, ...params):*
+    /**
+    * Resolves functions on implementations held by Utility.
+    * Pass in SomeInterface.functionToResolve as the first parameter and it
+    * will call functionToResolve on the registered impl for SomeInterface.
+    */
+    public static function resolve(resolveFunc:String, ...params):*
     {
-      var impl:Object = getUtility(forAPI);
+      var impl:Object = getUtility(resolveFunc.split('.').shift());
+      
+      resolveFunc = resolveFunc.split('.').pop();
       
       if(!impl || !(resolveFunc in impl))
         return;

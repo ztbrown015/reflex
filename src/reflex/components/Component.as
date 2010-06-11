@@ -76,7 +76,7 @@
       if(_currentState == value)
         return;
       
-      Utility.resolve(IStateUtility, "change", _currentState, value);
+      Utility.resolve(<>IStateUtility.change</>, _currentState, value);
       
       _currentState = value;
     }
