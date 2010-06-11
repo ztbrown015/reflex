@@ -1,22 +1,10 @@
 package reflex.skins
 {
-	import flash.events.IEventDispatcher;
-	
-	import flight.list.IList;
-	
-	import reflex.display.IContainer;
-	//import reflex.layout.ILayoutAlgorithm;
-	
 	/**
 	 * @alpha
 	 **/
 	public interface ISkinnable
 	{
-		/*
-		function get data():Object;
-		function set data(value:Object):void;
-		*/
-		
 		/**
 		 * The component's current state.
 		 **/

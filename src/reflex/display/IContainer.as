@@ -1,7 +1,5 @@
 package reflex.display
 {
-	import flight.list.IList;
-	
 	import reflex.layouts.ILayout;
 	
 	/**
@@ -9,11 +7,9 @@ package reflex.display
 	 */
 	public interface IContainer
 	{
-		function get children():IList;
+		function get children():Array;
 		
 		function get layout():ILayout;
 		function set layout(value:ILayout):void;
-		
-		//function setSize(width:Number, height:Number):void;
 	}
 }

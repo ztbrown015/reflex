@@ -10,7 +10,7 @@ package reflex.utils
   {
     public static function init(root:MovieClip):void
     {
-      UtilityMap.registerUtility(IStateUtility, new StateUtility());
+      Utility.registerUtility(IStateUtility, new StateUtility());
     }
   }
 }

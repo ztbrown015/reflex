@@ -27,7 +27,7 @@ package reflex.skins
 	import reflex.measurement.IMeasurable;
 	import reflex.measurement.resolveHeight;
 	import reflex.measurement.resolveWidth;
-	import reflex.utils.UtilityMap;
+	import reflex.utils.Utility;
 	
 	/**
 	 * Skin is a convenient base class for many skins, a swappable graphical
@@ -69,7 +69,7 @@ package reflex.skins
 		private var _currentState:String; [Bindable]
 		public function get currentState():String { return _currentState; }
 		public function set currentState(value:String):void {
-      UtilityMap.resolve(IStateUtility, "change", this, _currentState, value);
+      Utility.resolve(IStateUtility, "change", this, _currentState, value);
 			_currentState = value;
 		}
 		

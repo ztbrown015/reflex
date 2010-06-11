@@ -2,7 +2,7 @@ package reflex.utils
 {
   import flash.utils.Dictionary;
 
-  public class UtilityMap
+  public class Utility
   {
     private static const implMap:Dictionary = new Dictionary(false);
     

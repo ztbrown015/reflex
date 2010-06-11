@@ -1,19 +1,13 @@
 package reflex.layouts
 {
-	import flash.display.DisplayObject;
-	import flash.events.Event;
-	import flash.events.IEventDispatcher;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
-	import flight.binding.Bind;
-	
-	import reflex.styles.resolveStyle;
-	import reflex.events.InvalidationEvent;
 	import reflex.measurement.resolveHeight;
 	import reflex.measurement.resolveWidth;
 	import reflex.measurement.setSize;
 	import reflex.styles.hasStyle;
+	import reflex.styles.resolveStyle;
 	
 	[LayoutProperty(name="style.left", measure="true")]
 	[LayoutProperty(name="style.right", measure="true")]
