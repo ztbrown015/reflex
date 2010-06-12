@@ -108,13 +108,11 @@ package reflex.layout
         return;
       }
       
-      target.addEventListener(DisplayPhases.LAYOUT, oneShot(onLayout, target));
-      Utility.resolve(<>IInvalidationUtility.invalidate</>, target, DisplayPhases.LAYOUT);
+      DisplayPhases.invalidateLayout(target, oneShot(onLayout, target));
       
       if(children)
       {
-        target.addEventListener(DisplayPhases.MEASURE, oneShot(onMeasure, target));
-        Utility.resolve(<>IInvalidationUtility.invalidate</>, target, DisplayPhases.MEASURE);
+        DisplayPhases.invalidateLayout(target, oneShot(onMeasure, target));
       }
       else
       {

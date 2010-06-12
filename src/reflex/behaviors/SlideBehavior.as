@@ -9,7 +9,8 @@ package reflex.behaviors
   import flight.position.Position;
   
   import reflex.events.ButtonEvent;
-  import reflex.measurement.resolveHeight;
+  import reflex.utilities.Utility;
+  import reflex.utilities.layout.ILayoutUtility;
   
   public class SlideBehavior extends Behavior // extends StepBehavior
   {
@@ -184,8 +185,9 @@ package reflex.behaviors
         }
         else
         {
-          var trackHeight:Number = reflex.measurement.resolveHeight(track);
-          var thumbHeight:Number = reflex.measurement.resolveHeight(thumb);
+          var trackHeight:Number = Utility.resolve(<>ILayoutUtility.resolveHeight</>, track);
+          var thumbHeight:Number = Utility.resolve(<>ILayoutUtility.resolveHeight</>, thumb);
+          
           p.y = (trackHeight - thumbHeight) * _percent + track.y;
           p = thumb.parent.globalToLocal(track.parent.localToGlobal(p));
           thumb.y = Math.round(p.y);

@@ -4,6 +4,8 @@ package reflex.utilities
   
   import reflex.utilities.invalidation.IInvalidationUtility;
   import reflex.utilities.invalidation.InvalidationUtility;
+  import reflex.utilities.layout.ILayoutUtility;
+  import reflex.utilities.layout.LayoutUtility;
   import reflex.utilities.metadata.IMetadataUtility;
   import reflex.utilities.metadata.MetadataUtility;
   import reflex.utilities.states.IStateUtility;
@@ -16,6 +18,7 @@ package reflex.utilities
     {
       Utility.registerUtility(IInvalidationUtility, new InvalidationUtility());
       Utility.registerUtility(IMetadataUtility, new MetadataUtility());
+      Utility.registerUtility(ILayoutUtility, new LayoutUtility());
       Utility.registerUtility(IStateUtility, new StateUtility());
     }
   }

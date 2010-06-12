@@ -11,7 +11,7 @@ package reflex.display
     {
       if(data is IDrawable)
       {
-        var shape:Shape = new Shape();
+        var shape:Sprite = new Sprite();
         (data as IDrawable).target = shape;
         //(data as IDrawable).render();
         //shape.graphics.beginFill(0x000000, 1);

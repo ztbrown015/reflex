@@ -18,7 +18,9 @@ package reflex.utilities
    */
   public function oneShot(func:Function, scope:IEventDispatcher):Function
   {
-    var handler:Function = function(event:Event):void{
+    var handler:Function =
+      function(event:Event):void
+      {
         scope.removeEventListener(event.type, handler);
         func.length != 0 ? func(event) : func();
       }

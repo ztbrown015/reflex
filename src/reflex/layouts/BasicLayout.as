@@ -3,11 +3,10 @@ package reflex.layouts
   import flash.geom.Point;
   import flash.geom.Rectangle;
   
-  import reflex.measurement.resolveHeight;
-  import reflex.measurement.resolveWidth;
-  import reflex.measurement.setSize;
   import reflex.styles.hasStyle;
   import reflex.styles.resolveStyle;
+  import reflex.utilities.Utility;
+  import reflex.utilities.layout.ILayoutUtility;
   
   [LayoutProperty(name="style.left", measure="true")]
   [LayoutProperty(name="style.right", measure="true")]
@@ -32,8 +31,8 @@ package reflex.layouts
       
       for each(var item:Object in children)
       {
-        xp = item.x + resolveWidth(item);
-        yp = item.y + resolveHeight(item);
+        xp = item.x + Utility.resolve(<>ILayoutUtility.resolveWidth</>, item);
+        yp = item.y + Utility.resolve(<>ILayoutUtility.resolveHeight</>, item);
         if(!isNaN(xp))
           point.x = Math.max(point.x, xp);
         if(!isNaN(yp))
@@ -57,8 +56,8 @@ package reflex.layouts
       
       for each(var child:Object in children)
       {
-        width = resolveWidth(child);
-        height = resolveHeight(child);
+        width = Utility.resolve(<>ILayoutUtility.resolveWidth</>, child);
+        height = Utility.resolve(<>ILayoutUtility.resolveHeight</>, child);
         left = resolveStyle(child, "left") as Number;
         right = resolveStyle(child, "right") as Number;
         top = resolveStyle(child, "top") as Number;
@@ -102,7 +101,7 @@ package reflex.layouts
           child.y = rectangle.height / 2 - height / 2;
         }
         
-        setSize(child, width, height);
+        Utility.resolve(<>ILayoutUtility.setSize</>, child, width, height);
       }
     }
   

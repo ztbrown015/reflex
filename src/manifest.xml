@@ -6,6 +6,7 @@
 	<component id="Container" class="reflex.display.Container"/>
 	<component id="ScrollContainer" class="reflex.display.ScrollContainer"/>
 	<component id="Button" class="reflex.components.Button"/>
+	<component id="SkinnableContainer" class="reflex.components.SkinnableContainer"/>
 	<component id="Component" class="reflex.components.Component"/>
 	<component id="List" class="reflex.components.List"/>
 	<component id="ScrollBar" class="reflex.components.ScrollBar"/>

@@ -9,16 +9,18 @@ package reflex.components
   import reflex.utilities.ReflexDefaults; ReflexDefaults;
   
   [Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
+  [SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
   
   /**
    * @alpha
    */
   public class Application extends Container
   {
-    
     public function Application()
     {
       super();
+      
+      trace('Application Constructor');
       
       addEventListener(Event.ADDED, onAdded);
     }
@@ -27,6 +29,8 @@ package reflex.components
     {
       if(event.eventPhase != EventPhase.AT_TARGET)
         return;
+      
+      trace('App Added to Stage');
       
       //contextMenu = new ContextMenu();
       //contextMenu.hideBuiltInItems();
@@ -37,8 +41,9 @@ package reflex.components
     
     private function onStageResize(event:Event):void
     {
-      width = stage.stageWidth;
-      height = stage.stageHeight;
+      setSize(stage.stageWidth, stage.stageHeight);
+      invalidateSize();
+      invalidateLayout();
     }
   }
 }

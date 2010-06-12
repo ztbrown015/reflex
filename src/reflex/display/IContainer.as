@@ -8,7 +8,7 @@ package reflex.display
 	public interface IContainer
 	{
 		function get children():Array;
-		function set children(... values):void;
+		function set children(values:Array):void;
 		
 		function get layout():ILayout;
 		function set layout(value:ILayout):void;

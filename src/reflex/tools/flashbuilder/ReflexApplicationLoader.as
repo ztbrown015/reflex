@@ -114,8 +114,8 @@ package reflex.tools.flashbuilder
       
       super.initializeApplication();
       
-      width = app.width = stage.stageWidth;
-      height = app.height = stage.stageHeight;
+      width = stage.stageWidth;
+      height = stage.stageHeight;
     }
     
     public function get preloadedRSLs():Dictionary

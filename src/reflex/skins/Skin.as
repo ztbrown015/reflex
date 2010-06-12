@@ -34,7 +34,7 @@ package reflex.skins
       return _children;
     }
     
-    public function set children(... values):void
+    public function set children(values:Array):void
     {
       _children = [].concat(values);
     }
@@ -89,7 +89,7 @@ package reflex.skins
       var copy:Array = children.concat();
       while(copy.length)
       {
-        attachSkinPart(copy.pop(), target);
+        attachSkinPart(copy.shift(), target);
       }
     }
     

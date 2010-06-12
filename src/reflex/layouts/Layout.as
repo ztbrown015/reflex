@@ -1,6 +1,5 @@
 package reflex.layouts
 {
-  import flash.display.DisplayObject;
   import flash.display.DisplayObjectContainer;
   import flash.events.EventDispatcher;
   import flash.events.IEventDispatcher;
@@ -8,14 +7,10 @@ package reflex.layouts
   import flash.geom.Rectangle;
   import flash.utils.Dictionary;
   
-  import reflex.display.Container;
-  import reflex.display.DisplayPhases;
   import reflex.display.IContainer;
-  import reflex.display.IInvalidating;
   import reflex.utilities.Utility;
-  import reflex.utilities.invalidation.IInvalidationUtility;
+  import reflex.utilities.layout.ILayoutUtility;
   import reflex.utilities.metadata.IMetadataUtility;
-  import reflex.utilities.oneShot;
   
 //  [LayoutProperty(name="measurements", measure="true")]
 //  [LayoutProperty(name="layout", measure="false")]
@@ -38,46 +33,11 @@ package reflex.layouts
     
     public function measure(children:Array):Point
     {
-      // this method of listening for layout invalidating changes is very much experimental
-      for each(var child:IEventDispatcher in children)
-      {
-        if(attached[child] != true)
-        {
-          Utility.resolve(<>IMetadataUtility.resolveLayoutProperties</>, this, child, invalidateSize);
-          attached[child] = true;
-        }
-      }
-      
-      return new Point(0, 0);
+      return new Point();
     }
     
     public function update(children:Array, rectangle:Rectangle):void
     {
-      // this method of listening for layout invalidating changes is very much experimental
-      for each(var child:IEventDispatcher in children)
-      {
-        if(attached[child] != true)
-        {
-          Utility.resolve(<>IMetadataUtility.resolveLayoutProperties</>, this, child, invalidateLayout);
-          attached[child] = true;
-        }
-      }
-    }
-    
-    protected function invalidateSize(... args):void
-    {
-      if(!target || !(target is DisplayObject))
-        return;
-      
-      DisplayPhases.invalidateSize(DisplayObject(target), onMeasure);
-    }
-    
-    protected function invalidateLayout(... args):void
-    {
-      if(!target || !(target is DisplayObject))
-        return;
-      
-      DisplayPhases.invalidateLayout(DisplayObject(target), onMeasure);
     }
     
     private function onMeasure():void
@@ -98,7 +58,9 @@ package reflex.layouts
           children.push(DisplayObjectContainer(target).getChildAt(index));
       }
       
-      measure(children);
+      var size:Point = measure(children);
+      
+      Utility.resolve(<>ILayoutUtility.setSize</>, target, size.x, size.y);
     }
     
     private function onLayout():void

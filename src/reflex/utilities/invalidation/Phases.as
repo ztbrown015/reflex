@@ -9,9 +9,10 @@ package reflex.utilities.invalidation
   {
     protected static function invalidate(phase:String, caller:DisplayObject, callback:Function = null):void
     {
-      if(Utility.resolve(<>IInvalidationUtility.invalidate</>, caller, phase))
-        if(callback != null)
-          caller.addEventListener(phase, oneShot(callback, caller));
+      if(callback != null)
+        caller.addEventListener(phase, callback);
+      
+      Utility.resolve(<>IInvalidationUtility.invalidate</>, caller, phase);
     }
   }
 }

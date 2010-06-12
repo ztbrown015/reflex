@@ -1,23 +1,19 @@
 package reflex.display
 {
+  import flash.display.DisplayObject;
   import flash.events.Event;
   import flash.events.EventPhase;
   import flash.geom.Point;
+  import flash.geom.Rectangle;
   
-  import reflex.events.InvalidationEvent;
+  import reflex.graphics.IDrawable;
   import reflex.layouts.ILayout;
-  import reflex.utilities.Utility;
-  import reflex.utilities.invalidation.IInvalidationUtility;
+  import reflex.skins.ISkin;
   import reflex.utilities.oneShot;
   
-  ////
   // Default property that MXML sets when you define children MXML nodes.
-  ////
   [DefaultProperty("children")]
   
-  ////
-  // Events this class dispatches. Update this list as it grows.
-  ////
   [Event(name="childrenChanged", type="Event")]
   [Event(name="layoutChanged", type="Event")]
   
@@ -29,6 +25,11 @@ package reflex.display
     public function Container()
     {
       addEventListener(Event.ADDED, onAdded);
+      
+      addEventListener(DisplayPhases.NOTIFY, function(... r):void{onNotifyPhase()}, false, 50);
+      addEventListener(DisplayPhases.CHILDREN, function(... r):void{onChildrenPhase()}, false, 50);
+      addEventListener(DisplayPhases.MEASURE, function(... r):void{onMeasurePhase()}, false, 50);
+      addEventListener(DisplayPhases.LAYOUT, function(... r):void{onLayoutPhase()}, false, 50);
     }
     
     private function onAdded(event:Event):void
@@ -50,7 +51,7 @@ package reflex.display
       return _children;
     }
     
-    public function set children(... values):void
+    public function set children(values:Array):void
     {
       while(numChildren)
         removeChildAt(0);
@@ -89,6 +90,7 @@ package reflex.display
       layoutChanged = true;
       
       invalidateNotifications();
+      invalidateSize();
       invalidateLayout();
     }
     
@@ -120,7 +122,8 @@ package reflex.display
     
     public function invalidateNotifications():void
     {
-      DisplayPhases.invalidateNotifications(this, onNotifyPhase);
+      trace('Container invalidateNotifications');
+      DisplayPhases.invalidateNotifications(this);
     }
     
     /**
@@ -130,6 +133,8 @@ package reflex.display
      */
     protected function onNotifyPhase():void
     {
+      trace('Container notify phase');
+      
       if(childrenChanged)
         dispatchEvent(new Event("childrenChanged"));
       childrenChanged = false;
@@ -141,21 +146,39 @@ package reflex.display
     
     public function invalidateChildren():void
     {
-      DisplayPhases.invalidateChildren(this, onChildrenPhase);
+      trace('Container invalidateChildren');
+      DisplayPhases.invalidateChildren(this);
     }
     
     protected function onChildrenPhase():void
     {
+      trace('Container children phase');
       
+      var copy:Array = children.concat();
+      var child:Object;
+      
+      while(copy.length)
+      {
+        child = copy.shift();
+        if(child is DisplayObject)
+          addChild(DisplayObject(child));
+        else if(child is IDrawable)
+          IDrawable(child).target = this;
+        else if(child is ISkin)
+          ISkin(child).target = this;
+      }
     }
     
     public function invalidateSize():void
     {
-      DisplayPhases.invalidateSize(this, onMeasurePhase);
+      trace('Container invalidateSize');
+      DisplayPhases.invalidateSize(this);
     }
     
     protected function onMeasurePhase():void
     {
+      trace('Container measure phase');
+      
       // Don't bother sizing if we've got an explicitWidth and explicitHeight -- it's not allowed to change.
       if(!isNaN(explicitWidth) && !isNaN(explicitHeight))
       {
@@ -164,9 +187,9 @@ package reflex.display
         return;
       }
       
-      if(isNaN(percentWidth))
+      if(isNaN(percentWidth) && !isNaN(explicitWidth))
         _width = explicitWidth;
-      if(isNaN(percentHeight))
+      if(isNaN(percentHeight) && !isNaN(explicitHeight))
         _height = explicitHeight;
       
       if(!layout)
@@ -182,15 +205,20 @@ package reflex.display
     
     public function invalidateLayout():void
     {
-      DisplayPhases.invalidateLayout(this, onLayoutPhase);
+      trace('Container invalidateLayout');
+      DisplayPhases.invalidateLayout(this);
     }
     
     protected function onLayoutPhase():void
     {
+      trace('Container layout phase');
+      
+      graphics.clear();
+      
       if(!layout)
         return;
       
-      layout.update(children, getBounds(this));
+      layout.update(children, new Rectangle(0, 0, width, height));
     }
     
     DisplayPhases;

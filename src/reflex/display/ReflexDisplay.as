@@ -2,42 +2,16 @@
 {
   import flash.display.Sprite;
   
-  import reflex.measurement.IMeasurable;
   
   /**
    * Modifies common DisplayObject properties for improved usability.
-   * For instance width and height properties will not be be affected by graphics API updates.
+   * For instance width and height properties will not be be affected by 
+   * graphics API updates.
    * Better naming options are welcome for this class.
    * @alpha
    */
-  public class ReflexDisplay extends Sprite implements IMeasurable
+  public class ReflexDisplay extends Sprite implements IMeasurable, IMovable
   {
-    override public function get x():Number
-    {
-      return super.x;
-    }
-    
-    override public function set x(value:Number):void
-    {
-      if(super.x == value)
-        return;
-      
-      super.x = value;
-    }
-    
-    override public function get y():Number
-    {
-      return super.y;
-    }
-    
-    override public function set y(value:Number):void
-    {
-      if(super.y == value)
-        return;
-      
-      super.y = value;
-    }
-    
     protected var _explicitWidth:Number;
     
     public function get explicitWidth():Number
@@ -118,6 +92,12 @@
     {
       _width = width;
       _height = height;
+    }
+    
+    public function move(x:Number, y:Number):void
+    {
+      super.x = x;
+      super.y = y;
     }
   }
 }

@@ -1,6 +1,5 @@
-package reflex.measurement
+package reflex.display
 {
-  
   public interface IMeasurable
   {
     function get width():Number;
