@@ -5,7 +5,7 @@ package reflex.display
   import reflex.utilities.Utility;
   import reflex.utilities.invalidation.IInvalidationUtility;
   import reflex.utilities.invalidation.Phases;
-  import reflex.utilities.oneShot;
+  import reflex.utilities.listen;
 
   public class DisplayPhases extends Phases
   {

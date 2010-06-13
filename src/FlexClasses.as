@@ -9,10 +9,11 @@ package
 	 * metadata tag in AS3-only projects - many of these classes are never
 	 * actually used, not even in the auto-generated code.
 	 */
-	internal class FlexClasses
+	public class FlexClasses
 	{
 		import mx.core.IMXMLObject;						IMXMLObject;
 		import mx.core.IFlexModuleFactory;				IFlexModuleFactory;
+    import mx.core.IStateClient2; IStateClient2;
     
 		//import mx.collections.IList;					IList;
 		

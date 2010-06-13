@@ -4,37 +4,21 @@
 	<!-- components -->
 	<component id="Application" class="reflex.components.Application"/>
 	<component id="Container" class="reflex.display.Container"/>
-	<component id="ScrollContainer" class="reflex.display.ScrollContainer"/>
 	<component id="Button" class="reflex.components.Button"/>
 	<component id="SkinnableContainer" class="reflex.components.SkinnableContainer"/>
 	<component id="Component" class="reflex.components.Component"/>
-	<component id="List" class="reflex.components.List"/>
-	<component id="ScrollBar" class="reflex.components.ScrollBar"/>
-	<component id="ScrollPane" class="reflex.components.ScrollPane"/>
-	<component id="Stepper" class="reflex.components.Stepper"/>
 	<component id="ImageDisplay" class="reflex.display.ImageDisplay"/>
 	
 	<!-- skins -->
-	<component id="BackgroundSkin" class="reflex.skins.BackgroundSkin"/>
-	<component id="ButtonSkin" class="reflex.skins.ButtonSkin"/>
-	<component id="GraphicSkin" class="reflex.skins.GraphicSkin"/>
-	<component id="ScrollBarSkin" class="reflex.skins.ScrollBarSkin"/>
 	<component id="Skin" class="reflex.skins.Skin"/>
-	<component id="StatefulBackgroundSkin" class="reflex.skins.StatefulBackgroundSkin"/>
-	<component id="StepperSkin" class="reflex.skins.StepperSkin"/>
-	<component id="DragStepperSkin" class="reflex.skins.DragStepperSkin"/>
 	
 	<!-- behaviors -->
 	<component id="ButtonBehavior" class="reflex.behaviors.ButtonBehavior"/>
 	<component id="CursorBehavior" class="reflex.behaviors.CursorBehavior"/>
 	<component id="DragBehavior" class="reflex.behaviors.DragBehavior"/>
-	<component id="ListBehavior" class="reflex.behaviors.ListBehavior"/>
 	<component id="ListSelectBehavior" class="reflex.behaviors.ListSelectBehavior"/>
 	<component id="PopoutBehavior" class="reflex.behaviors.PopoutBehavior"/>
-	<component id="SlideBehavior" class="reflex.behaviors.SlideBehavior"/>
 	<component id="SelectableBehavior" class="reflex.behaviors.SelectableBehavior"/>
-	<component id="StepBehavior" class="reflex.behaviors.StepBehavior"/>
-	<component id="DragStepBehavior" class="reflex.behaviors.DragStepBehavior"/>
 	
 	<!-- layouts -->
 	<component id="ILayout" class="reflex.layouts.ILayout"/>
@@ -43,7 +27,6 @@
 	<component id="BasicLayout" class="reflex.layouts.BasicLayout"/>
 	<component id="VerticalLayout" class="reflex.layouts.VerticalLayout"/>
 	<component id="HorizontalLayout" class="reflex.layouts.HorizontalLayout"/>
-	<component id="DockLayout" class="reflex.layouts.DockLayout"/>-->
 	
 	<!-- measurement -->
 	<!--component id="Measurements" class="reflex.measurement.Measurements"/-->

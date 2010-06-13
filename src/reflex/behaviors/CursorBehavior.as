@@ -1,9 +1,6 @@
 package reflex.behaviors
 {
-	import flash.display.DisplayObject;
 	import flash.display.InteractiveObject;
-	
-	import flight.binding.Bind;
 	
 	import reflex.cursors.Cursor;
 	
@@ -15,8 +12,8 @@ package reflex.behaviors
 		public function CursorBehavior(target:IEventDispatcher=null)
 		{
 			super(target);
-			Bind.addListener(this, cursorChange, this, "cursor");
-			Bind.addListener(this, targetChange, this, "target");
+//			Bind.addListener(this, cursorChange, this, "cursor");
+//			Bind.addListener(this, targetChange, this, "target");
 		}
 		
 		protected function cursorChange(cursor:Object):void

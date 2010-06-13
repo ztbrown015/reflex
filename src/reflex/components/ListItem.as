@@ -21,7 +21,6 @@ package reflex.components
 		public function ListItem()
 		{
 			behaviors = [new ButtonBehavior()];
-			skin = new ButtonGraphic();
 		}
 	}
 }

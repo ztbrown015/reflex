@@ -9,7 +9,9 @@ package reflex.display
   import reflex.graphics.IDrawable;
   import reflex.layouts.ILayout;
   import reflex.skins.ISkin;
-  import reflex.utilities.oneShot;
+  import reflex.utilities.listen;
+  
+  use namespace reflex;
   
   // Default property that MXML sets when you define children MXML nodes.
   [DefaultProperty("children")]
@@ -22,6 +24,8 @@ package reflex.display
    */
   public class Container extends ReflexDisplay implements IContainer, IInvalidating
   {
+    DisplayPhases;
+    
     public function Container()
     {
       addEventListener(Event.ADDED, onAdded);
@@ -41,7 +45,7 @@ package reflex.display
     }
     
     private var _children:Array;
-    private var childrenChanged:Boolean = false;
+    reflex var childrenChanged:Boolean = false;
     
     [Bindable(event="childrenChanged")]
     [ArrayElementType("Object")]
@@ -65,7 +69,7 @@ package reflex.display
     }
     
     private var _layout:ILayout;
-    private var layoutChanged:Boolean = false;
+    reflex var layoutChanged:Boolean = false;
     
     [Bindable(event="layoutChanged")]
     
@@ -123,6 +127,7 @@ package reflex.display
     public function invalidateNotifications():void
     {
       trace('Container invalidateNotifications');
+      
       DisplayPhases.invalidateNotifications(this);
     }
     
@@ -147,6 +152,7 @@ package reflex.display
     public function invalidateChildren():void
     {
       trace('Container invalidateChildren');
+      
       DisplayPhases.invalidateChildren(this);
     }
     
@@ -172,6 +178,7 @@ package reflex.display
     public function invalidateSize():void
     {
       trace('Container invalidateSize');
+      
       DisplayPhases.invalidateSize(this);
     }
     
@@ -206,6 +213,7 @@ package reflex.display
     public function invalidateLayout():void
     {
       trace('Container invalidateLayout');
+      
       DisplayPhases.invalidateLayout(this);
     }
     
@@ -218,9 +226,7 @@ package reflex.display
       if(!layout)
         return;
       
-      layout.update(children, new Rectangle(0, 0, width, height));
+      layout.update(children, new Rectangle(y, x, width, height));
     }
-    
-    DisplayPhases;
   }
 }

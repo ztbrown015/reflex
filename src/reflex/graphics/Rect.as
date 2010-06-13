@@ -20,12 +20,10 @@ package reflex.graphics
     {
       super.renderGraphic();
       
-      g.lineStyle(3, 0x00);
-      g.beginFill(0x00, 1);
+      g.lineStyle(3, 0x00, 1, true);
+      g.beginFill(0x00, 0.5);
       g.drawRect(x, y, width, height);
       g.endFill();
-      
-      trace([x, y, width, height].toString());
     }
   }
 }

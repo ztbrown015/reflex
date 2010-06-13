@@ -31,6 +31,9 @@ package reflex.tools.flash
       // here is no problem.
       root.stop();
       
+      graphics.beginFill(0, 0);
+      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+      
       if(root.totalFrames > 1 && root && root.loaderInfo)
         root.loaderInfo.addEventListener(Event.INIT, initHandler);
     }

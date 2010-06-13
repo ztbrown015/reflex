@@ -6,7 +6,6 @@ package reflex.layouts
   import reflex.utilities.Utility;
   import reflex.utilities.layout.ILayoutUtility;
   
-  
   [LayoutProperty(name="width", measure="true")]
   [LayoutProperty(name="height", measure="true")]
   
@@ -52,10 +51,8 @@ package reflex.layouts
         width = Utility.resolve(<>ILayoutUtility.resolveWidth</>, child);
         height = Utility.resolve(<>ILayoutUtility.resolveHeight</>, child);
         
-        child.x = position;
-        child.y = (rectangle.height - height) * 0.5;
-        
         Utility.resolve(<>ILayoutUtility.setSize</>, child, width, height);
+        Utility.resolve(<>ILayoutUtility.move</>, child, position, (rectangle.height - height) * 0.5);
         
         position += width + gap;
       }

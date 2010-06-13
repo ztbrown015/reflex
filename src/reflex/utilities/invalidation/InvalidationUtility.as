@@ -225,9 +225,10 @@ internal class ValidationPhase
       
       for(element in current)
       {
+        IEventDispatcher(element).dispatchEvent(new InvalidationEvent(type));
+        
         delete current[element];
         delete invalidated[element];
-        IEventDispatcher(element).dispatchEvent(new InvalidationEvent(type));
       }
     }
     

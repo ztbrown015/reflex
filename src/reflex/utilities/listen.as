@@ -16,12 +16,13 @@ package reflex.utilities
    *   //Do stuff
    * }</code>
    */
-  public function oneShot(func:Function, scope:IEventDispatcher):Function
+  public function listen(func:Function, oneShotScope:IEventDispatcher = null):Function
   {
     var handler:Function =
       function(event:Event):void
       {
-        scope.removeEventListener(event.type, handler);
+        if(oneShotScope)
+          oneShotScope.removeEventListener(event.type, handler);
         func.length != 0 ? func(event) : func();
       }
     

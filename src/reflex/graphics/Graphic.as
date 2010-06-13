@@ -8,9 +8,10 @@ package reflex.graphics
   
   import reflex.display.DisplayPhases;
   import reflex.display.IMeasurable;
-  import reflex.utilities.oneShot;
+  import reflex.display.IMovable;
+  import reflex.utilities.listen;
   
-  public class Graphic extends EventDispatcher implements IDrawable, IMeasurable
+  public class Graphic extends EventDispatcher implements IDrawable, IMeasurable, IMovable
   {
     public function Graphic()
     {
@@ -40,24 +41,30 @@ package reflex.graphics
         attachTo(target);
     }
     
+    private var listener:Function;
     protected function attachTo(target:Sprite):void
     {
+      // Graphics need to always listen for the layout event on their targets,
+      // because when the their targets validate their layout phase, they clear
+      // their graphics context. We get the event and redraw ourselves.
+      target.addEventListener(DisplayPhases.LAYOUT, listener = listen(render));
+      
       invalidate();
     }
     
     protected function detachFrom(target:Sprite):void
     {
+      target.removeEventListener(DisplayPhases.LAYOUT, listener);
     }
     
     protected var invalidatedFlag:Boolean = false;
     
     public function invalidate():void
     {
-      if(!target || invalidatedFlag)
+      if(!target)
         return;
       
-      DisplayPhases.invalidateLayout(target, oneShot(render, this));
-      invalidatedFlag = true;
+      DisplayPhases.invalidateLayout(target);
     }
     
     public function render():void
@@ -117,6 +124,16 @@ package reflex.graphics
     {
       this.width = width;
       this.height = height;
+      
+      invalidate();
+    }
+    
+    public function move(x:Number, y:Number):void
+    {
+      this.x = x;
+      this.y = y;
+      
+      invalidate();
     }
     
     private function onPropertyChange(event:PropertyChangeEvent):void

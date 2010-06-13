@@ -1,11 +1,6 @@
 package reflex.skins
 {
-  import flight.binding.Bind;
-  import flight.list.ArrayList;
-  
   import reflex.display.Container;
-  
-  import reflex.events.InvalidationEvent;
   
   public class ListSkin extends Skin
   {
@@ -16,9 +11,9 @@ package reflex.skins
     {
       super();
       container = new Container();
-      Bind.addBinding(this, "container.children", this, "target.dataProvider");
-      Bind.addBinding(this, "container.template", this, "target.template");
-      Bind.addBinding(this, "container.layout", this, "target.layout");
+//      Bind.addBinding(this, "container.children", this, "target.dataProvider");
+//      Bind.addBinding(this, "container.template", this, "target.template");
+//      Bind.addBinding(this, "container.layout", this, "target.layout");
       children = [container];
       //children.addItem(container);
     }

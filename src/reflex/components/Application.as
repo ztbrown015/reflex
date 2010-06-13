@@ -1,15 +1,17 @@
 package reflex.components
 {
+  import flash.display.Graphics;
   import flash.display.StageAlign;
   import flash.display.StageScaleMode;
   import flash.events.Event;
   import flash.events.EventPhase;
   
   import reflex.display.Container;
-  import reflex.utilities.ReflexDefaults; ReflexDefaults;
+  import reflex.utilities.ReflexDefaults;
+  ReflexDefaults;
   
   [Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
-  [SWF(widthPercent="100%", heightPercent="100%", frameRate="30")]
+  [SWF(percentWidth="100%", percentHeight="100%", frameRate="30")]
   
   /**
    * @alpha
@@ -37,12 +39,14 @@ package reflex.components
       stage.scaleMode = StageScaleMode.NO_SCALE;
       stage.align = StageAlign.TOP_LEFT;
       stage.addEventListener(Event.RESIZE, onStageResize);
+      onStageResize(null);
     }
     
     private function onStageResize(event:Event):void
     {
-      setSize(stage.stageWidth, stage.stageHeight);
-      invalidateSize();
+      width = stage.stageWidth;
+      height = stage.stageHeight;
+      
       invalidateLayout();
     }
   }

@@ -7,7 +7,7 @@ package reflex.display
   import reflex.events.InvalidationEvent;
   import reflex.utilities.Utility;
   import reflex.utilities.invalidation.IInvalidationUtility;
-  import reflex.utilities.oneShot;
+  import reflex.utilities.listen;
   
   public class ImageDisplay extends ReflexDisplay
   {
@@ -25,7 +25,7 @@ package reflex.display
         return;
       
       _source = value;
-      addEventListener(SOURCE_CHANGED, oneShot(onSourceChanged, this));
+      addEventListener(SOURCE_CHANGED, listen(onSourceChanged, this));
       Utility.resolve(<>IInvalidationUtility.invalidate</>, this, SOURCE_CHANGED);
     }
     

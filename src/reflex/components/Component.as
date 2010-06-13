@@ -16,6 +16,8 @@
   import reflex.utilities.Utility;
   import reflex.utilities.states.IStateUtility;
   
+  use namespace reflex;
+  
   [Style(name="left")]
   [Style(name="right")]
   [Style(name="top")]
@@ -36,7 +38,7 @@
     }
     
     private var _behaviors:CompositeBehavior;
-    private var behaviorsChanged:Boolean = false;
+    reflex var behaviorsChanged:Boolean = false;
     [Bindable(event="behaviorsChanged")]
     [ArrayElementType("reflex.behaviors.IBehavior")]
     [Inspectable(name="Behaviors", type="Array")]
@@ -70,7 +72,7 @@
     }
     
     private var _currentState:String;
-    private var currentStateChanged:Boolean = false;
+    reflex var currentStateChanged:Boolean = false;
     [Bindable(event="currentStateChanged")]
     
     public function get currentState():String
@@ -110,7 +112,7 @@
     }
     
     private var _skin:Object;
-    private var skinChanged:Boolean = false;
+    reflex var skinChanged:Boolean = false;
     [Bindable(event="skinChanged")]
     [Inspectable(name="Skin", type="General")]
     
@@ -179,7 +181,7 @@
     
     public function get style():Object
     {
-      return _style;
+      return _style['style'] || _style;
     }
     
     public function set style(styleObject:Object):void
@@ -192,17 +194,17 @@
     
     public function clearStyle(styleProp:String):Boolean
     {
-      return style.clearStyle(styleProp);
+      return delete _style[styleProp];
     }
     
     public function getStyle(styleProp:String):*
     {
-      return style.getStyle(styleProp);
+      return _style[styleProp];
     }
     
     public function setStyle(styleProp:String, newValue:*):void
     {
-      style.setStyle(styleProp, newValue);
+      style[styleProp] = newValue;
     }
     
     override protected function onNotifyPhase():void
