@@ -1,31 +1,22 @@
 package reflex.tools.flashbuilder
 {
   import flash.display.DisplayObject;
-  import flash.display.DisplayObjectContainer;
-  import flash.display.Graphics;
-  import flash.display.Loader;
-  import flash.display.MovieClip;
-  import flash.display.Stage;
-  import flash.display.StageAlign;
-  import flash.display.StageQuality;
-  import flash.display.StageScaleMode;
   import flash.events.Event;
-  import flash.net.URLLoader;
-  import flash.net.URLLoaderDataFormat;
-  import flash.net.URLRequest;
   import flash.utils.Dictionary;
   import flash.utils.getDefinitionByName;
-  import flash.utils.setTimeout;
   
   import mx.core.CrossDomainRSLItem;
   import mx.core.IFlexModuleFactory;
   import mx.core.RSLItem;
   import mx.utils.LoaderUtil;
   
+  import reflex.display.DisplayPhases;
   import reflex.tools.flash.ReflexFlashLoader;
-  import reflex.tools.flash.SWFPreloader;
+  import reflex.utilities.Utility;
+  import reflex.utilities.invalidation.IInvalidationUtility;
+  import reflex.utilities.layout.ILayoutUtility;
+  import reflex.utilities.listen;
   
-  // TODO: resolve error in Flex4: 1144: Interface method callInContext in namespace mx.core:IFlexModuleFactory is implemented with an incompatible signature in class reflex.tools.flashbuilder:ReflexApplicationLoader.
   public class ReflexApplicationLoader extends ReflexFlashLoader implements IFlexModuleFactory
   {
     public function ReflexApplicationLoader()
@@ -114,8 +105,7 @@ package reflex.tools.flashbuilder
       
       super.initializeApplication();
       
-      width = stage.stageWidth;
-      height = stage.stageHeight;
+      onRender();
     }
     
     public function get preloadedRSLs():Dictionary
@@ -154,6 +144,33 @@ package reflex.tools.flashbuilder
     
     public function registerImplementation(interfaceName:String, impl:Object):void
     {
+      Utility.registerUtility(interfaceName, impl);
+    }
+    
+    override protected function onStageResize(event:Event):void
+    {
+      super.onStageResize(event);
+      
+      if(numChildren <= 0)
+        return;
+      
+      var child:DisplayObject = getChildAt(0);
+      
+      DisplayPhases.invalidateSize(child);
+      DisplayPhases.invalidateLayout(child);
+      DisplayPhases.invalidateLayout(this, listen(onRender));
+    }
+    
+    private function onRender():void
+    {
+      if(numChildren <= 0)
+        return;
+      
+      var child:DisplayObject = getChildAt(0);
+      child.width = stage.stageWidth;
+      child.height= stage.stageHeight;
+      
+//      Utility.resolve(<>ILayoutUtility.setSize</>, getChildAt(0), stage.stageWidth, stage.stageHeight);
     }
   }
 }

@@ -1,7 +1,7 @@
 package reflex.utilities
 {
   import flash.utils.Dictionary;
-
+  
   public class Utility
   {
     private static const implMap:Dictionary = new Dictionary(false);
@@ -23,15 +23,24 @@ package reflex.utilities
     
     private static function getName(forObject:Object):String
     {
-      return (forObject is Class) ? forObject.toString() : '[class ' + forObject.toString() + ']';
+      if(forObject is Class)
+        return forObject.toString();
+      else if(forObject is String)
+      {
+        return '[class ' + (forObject.toString().indexOf("::") == -1 ?
+          forObject.toString() :
+          forObject.toString().split("::").pop()) + ']';
+      }
+      
+      throw new Error("Can't understand the type you are attempting to retrieve a name for.");
     }
     
     /**
-    * Resolves functions on implementations held by Utility.
-    * Pass in SomeInterface.functionToResolve as the first parameter and it
-    * will call functionToResolve on the registered impl for SomeInterface.
-    */
-    public static function resolve(resolvePath:String, ...params):*
+     * Resolves functions on implementations held by Utility.
+     * Pass in SomeInterface.functionToResolve as the first parameter and it
+     * will call functionToResolve on the registered impl for SomeInterface.
+     */
+    public static function resolve(resolvePath:String, ... params):*
     {
       var obj:Array = resolvePath.split('.');
       var method:String = obj.pop();

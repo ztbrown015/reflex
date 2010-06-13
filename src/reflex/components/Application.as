@@ -11,7 +11,7 @@ package reflex.components
   ReflexDefaults;
   
   [Frame(factoryClass="reflex.tools.flashbuilder.ReflexApplicationLoader")]
-  [SWF(percentWidth="100%", percentHeight="100%", frameRate="30")]
+  [SWF(percentWidth="100%", percentHeight="100%")]
   
   /**
    * @alpha
@@ -36,19 +36,19 @@ package reflex.components
       
       //contextMenu = new ContextMenu();
       //contextMenu.hideBuiltInItems();
-      stage.scaleMode = StageScaleMode.NO_SCALE;
-      stage.align = StageAlign.TOP_LEFT;
-      stage.addEventListener(Event.RESIZE, onStageResize);
-      onStageResize(null);
     }
     
     private function onStageResize(event:Event):void
     {
-      _explicitWidth = isNaN(percentWidth) ? stage.stageWidth : percentWidth * 0.01 * stage.stageWidth;
-      _explicitHeight = isNaN(percentHeight) ? stage.stageHeight : percentHeight * 0.01 * stage.stageHeight;
+//      setSize(isNaN(percentWidth) ? stage.stageWidth : percentWidth * 0.01 * stage.stageWidth,
+//              isNaN(percentHeight) ? stage.stageHeight : percentHeight * 0.01 * stage.stageHeight);
+//      _explicitWidth = NaN;
+//      _explicitHeight = NaN;
+//      _explicitWidth = isNaN(percentWidth) ? stage.stageWidth : percentWidth * 0.01 * stage.stageWidth;
+//      _explicitHeight = isNaN(percentHeight) ? stage.stageHeight : percentHeight * 0.01 * stage.stageHeight;
       
-      invalidateSize();
-      invalidateLayout();
+//      invalidateSize();
+//      invalidateLayout();
     }
   }
 }

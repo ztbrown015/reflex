@@ -23,7 +23,7 @@ package reflex.layouts
       
       var width:Number, height:Number;
       var gap:Number = getStyle('gap');
-      var point:Point = new Point(gap, 0);
+      var point:Point = new Point();
       var margin:Padding;
       
       for each(var child:Object in children)
@@ -49,49 +49,49 @@ package reflex.layouts
       var width:Number = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
       var height:Number = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
       
-      var dimensions:Point = getDimensions(null, true, children);
+      var dimensions:Point = getDimensions(children, true);
+      
+      if(index == 0)
+        position += excessSpace.y * getVerticalAlign(this);
+      
       var margin:Padding = new Padding(
         Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft') || 0,
-        0,
+        0, // ignore marginRight since it's not used in these calculations.
         Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop') || 0,
         Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom') || 0
         );
       
-      var x:Number = ((dimensions.x - width) * getHorizontalAlign(this)) + margin.left;
+      var x:Number = padding.left + margin.left + ((dimensions.x - width) * getHorizontalAlign(this));
       
-      Utility.resolve(<>ILayoutUtility.move</>, child, padding.left + x + ((dimensions.x - width - x) * getHorizontalAlign(child)), position + margin.top);
+      Utility.resolve(<>ILayoutUtility.move</>, child, 
+        x + ((dimensions.x - width - x - padding.right) * getHorizontalAlign(child)), 
+        position + margin.top);
       
-      return position + height + getStyle('gap') + margin.top + margin.bottom;
+//      return position + getStyle('gap') + width + margin.left + margin.right;
+      return position + getStyle('gap') + height + margin.top + margin.bottom;
     }
     
-    override protected function getDimensions(usedSpace:Point = null, withPadding:Boolean = true, children:Array = null):Point
+    override protected function getDimensions(children:Array = null, withPadding:Boolean = true, usedSpace:Point = null):Point
     {
       if(!target)
         return new Point();
       
       if(!usedSpace)
-        usedSpace = new Point();
+        usedSpace = new Point()
       
       var gapSpace:Number = getStyle('gap') * (children && children.length ? children.length - 1 : 0);
       
+      var size:Point = new Point(target.width, target.height - gapSpace);
+      
       if(withPadding)
-        return new Point(target.width - padding.left - padding.right,
-                         target.height - padding.top - padding.bottom - gapSpace - usedSpace.y);
-      else
-        return new Point(target.width, target.height).subtract(usedSpace);
+        size = new Point(target.width - padding.left - padding.right, target.height - gapSpace - padding.top - padding.bottom);
+      
+      return new Point(size.x, Math.min(size.y, size.y - usedSpace.y));
     }
     
-    override protected function getPercentRatio(total:Point, numChildren:Number):Point
+    override protected function getPercentRatio(total:Point):Point
     {
-      if(numChildren <= 1)
-        numChildren = 1;
-      
-      var point:Point = total.clone();
-      point.y /= (numChildren * numChildren);
-      point.y *= .01;
-      point.x = 1;
-      
-      return point;
+      return new Point(.01, Math.min(1, total.y * .01) * .01);
     }
   }
 }

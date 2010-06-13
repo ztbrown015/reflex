@@ -19,8 +19,6 @@ package reflex.layouts
       if(!children || children.length == 0)
         return;
       
-      var dimensions:Point = getDimensions(null, false);
-      
       var position:Number = padding.left;
       var length:int = children.length;
       var child:Object;
@@ -48,15 +46,10 @@ package reflex.layouts
     {
       var align:String = Utility.resolve(<>IStyleUtility.getStyle</>, object, 'hAlign') || 'left';
       
-      switch(align)
-      {
-        case 'left':
-          return 0;
-        case 'center':
-          return 0.5;
-        case 'right':
-          return 1;
-      }
+      if(align == 'center')
+        return 0.5;
+      else if(align == 'right')
+        return 1;
       
       return 0;
     }
@@ -65,15 +58,10 @@ package reflex.layouts
     {
       var align:String = Utility.resolve(<>IStyleUtility.getStyle</>, object, 'vAlign') || 'top';
       
-      switch(align)
-      {
-        case 'top':
-          return 0;
-        case 'middle':
-          return 0.5;
-        case 'bottom':
-          return 1;
-      }
+      if(align == 'middle')
+        return 0.5;
+      else if(align == 'bottom')
+        return 1;
       
       return 0;
     }

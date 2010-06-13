@@ -44,7 +44,7 @@ package reflex.utilities.layout
     public function getPercentWidth(object:Object, total:Number = 0):Number
     {
       if(object && 'percentWidth' in object && total > 0)
-        return object['percentWidth'] * .01 * total;
+        return object['percentWidth'] * total;
       else if(total == 0)
         return object['percentWidth'];
       
@@ -54,7 +54,7 @@ package reflex.utilities.layout
     public function getPercentHeight(object:Object, total:Number = 0):Number
     {
       if(object && 'percentHeight' in object && total > 0)
-        return object['percentHeight'] * .01 * total;
+        return object['percentHeight'] * total;
       else if(total == 0)
         return object['percentHeight'];
       

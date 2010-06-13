@@ -31,18 +31,8 @@ package reflex.tools.flash
       // here is no problem.
       root.stop();
       
-      stage.addEventListener(Event.RESIZE, onStageResize);
-      onStageResize(null);
-      
       if(root.totalFrames > 1 && root && root.loaderInfo)
         root.loaderInfo.addEventListener(Event.INIT, initHandler);
-    }
-    
-    private function onStageResize(event:Event):void
-    {
-      graphics.clear();
-      graphics.beginFill(0, 0);
-      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
     }
     
     /**
@@ -56,12 +46,23 @@ package reflex.tools.flash
     /**
      * Utility function to set usual stage properties.
      */
-    public static function initStage(stage:Stage):void
+    public function initStage(stage:Stage):void
     {
       stage.frameRate = 30;
       stage.quality = StageQuality.BEST;
       stage.align = StageAlign.TOP_LEFT;
       stage.scaleMode = StageScaleMode.NO_SCALE;
+      stage.addEventListener(Event.RESIZE, onStageResize);
+      onStageResize(null);
+    }
+    
+    protected function onStageResize(event:Event):void
+    {
+      graphics.clear();
+      graphics.beginFill(0, 0);
+      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+//      width = stage.stageWidth;
+//      height = stage.stageHeight;
     }
     
     override public function get stage():Stage

@@ -13,7 +13,7 @@ package reflex.graphics
     {
       super.renderGraphic();
       
-      g.lineStyle(3, 0x00, 1, true);
+      g.lineStyle(2, 0x00, 1, true);
       g.beginFill(0x00, 0.5);
       g.drawRect(x, y, width, height);
       g.endFill();

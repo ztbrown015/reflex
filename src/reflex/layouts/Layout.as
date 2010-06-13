@@ -176,13 +176,12 @@ package reflex.layouts
       index = 0;
       length = percentChildren.length;
       
-      totalPercent.x = Math.max(totalPercent.x, 100);
-      totalPercent.y = Math.max(totalPercent.y, 100);
+      var total:Point = getDimensions(children, true, usedSpace);
       
-      var percentRatio:Point = getPercentRatio(totalPercent, length);
-      var total:Point = getDimensions(usedSpace, true, children);
+      var percentRatio:Point = getPercentRatio(totalPercent);
       
       var size:Point = new Point();
+      var percentSize:Point = new Point();
       
       for(; index < length; index++)
       {
@@ -201,6 +200,8 @@ package reflex.layouts
           
           size.x -= isNaN(margin.left) ? 0 : margin.left;
           size.x -= isNaN(margin.right) ? 0 : margin.right;
+          
+          percentSize.x += size.x;
         }
         if(percent.y)
         {
@@ -209,13 +210,17 @@ package reflex.layouts
           
           size.y -= isNaN(margin.top) ? 0 : margin.top;
           size.y -= isNaN(margin.bottom) ? 0 : margin.bottom;
+          
+          percentSize.y += size.y;
         }
+        
+        excessSpace = total.clone().subtract(percentSize.clone());
         
         Utility.resolve(<>ILayoutUtility.setSize</>, child, size.x, size.y);
       }
     }
     
-    protected function getDimensions(usedSpace:Point = null, withPadding:Boolean = true, children:Array = null):Point
+    protected function getDimensions(children:Array = null, withPadding:Boolean = true, usedSpace:Point = null):Point
     {
       if(!target)
         return new Point();
@@ -223,23 +228,23 @@ package reflex.layouts
       if(!usedSpace)
         usedSpace = new Point();
       
+      var size:Point = new Point(target.width, target.height);
+      
       if(withPadding)
-        return new Point(target.width - padding.left - padding.right,
-                         target.height - padding.top - padding.bottom).subtract(usedSpace);
-      else
-        return new Point(target.width, target.height).subtract(usedSpace);
+      {
+        size.x = size.x - padding.left - padding.right;
+        size.y = size.y - padding.top - padding.bottom;
+      }
+      
+      return new Point(Math.min(size.x, size.x - usedSpace.x), Math.min(size.y, size.y - usedSpace.y));
     }
     
-    protected function getPercentRatio(total:Point, numChildren:Number):Point
+    protected function getPercentRatio(total:Point):Point
     {
-      var point:Point = total.clone();
-      point.x /= (numChildren * 2)
-      point.y /= (numChildren * 2);
-      point.x *= .01;
-      point.y *= .01;
-      
-      return point;
+      return new Point(.01, .01);
     }
+    
+    protected var excessSpace:Point = new Point();
     
     private function onMeasure():void
     {
