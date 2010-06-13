@@ -22,8 +22,8 @@ package reflex.layouts
       
       for each(var item:Object in children)
       {
-        point.x = Math.max(point.x, item.x + Utility.resolve(<>ILayoutUtility.getWidth</>, item));
-        point.y = Math.max(point.y, item.y + Utility.resolve(<>ILayoutUtility.getHeight</>, item));
+        point.x = Math.max(point.x, Utility.resolve(<>ILayoutUtility.getX</>, item) + Utility.resolve(<>ILayoutUtility.getWidth</>, item));
+        point.y = Math.max(point.y, Utility.resolve(<>ILayoutUtility.getY</>, item) + Utility.resolve(<>ILayoutUtility.getHeight</>, item));
       }
       
       return point;
@@ -43,11 +43,10 @@ package reflex.layouts
       {
         child = children[index];
         
-        
         Utility.resolve(<>ILayoutUtility.move</>,
-          child,
-          Utility.resolve(<>ILayoutUtility.getX</>, child),
-          Utility.resolve(<>ILayoutUtility.getY</>, child));
+                        child,
+                        Utility.resolve(<>ILayoutUtility.getX</>, child),
+                        Utility.resolve(<>ILayoutUtility.getY</>, child));
       }
     }
   }

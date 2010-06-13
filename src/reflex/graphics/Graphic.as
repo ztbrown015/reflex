@@ -14,14 +14,16 @@ package reflex.graphics
   import reflex.styles.StyleAwareActor;
   import reflex.utilities.listen;
   
-  [Style(name="left")]
-  [Style(name="right")]
-  [Style(name="top")]
-  [Style(name="bottom")]
-  [Style(name="horizontalCenter")]
-  [Style(name="verticalCenter")]
-  [Style(name="dock")]
-  [Style(name="align")]
+  [Style(name="left", type="Number")]
+  [Style(name="right", type="Number")]
+  [Style(name="top", type="Number")]
+  [Style(name="bottom", type="Number")]
+  [Style(name="horizontalCenter", type="Number")]
+  [Style(name="verticalCenter", type="Number")]
+  [Style(name="dock", type="Boolean", enumeration="true,false")]
+  
+  [Style(name="vAlign", type="String", enumeration="top,middle,bottom")]
+  [Style(name="hAlign", type="String", enumeration="left,center,right")]
   
   [Style(name="marginLeft", type="Number")]
   [Style(name="marginRight", type="Number")]

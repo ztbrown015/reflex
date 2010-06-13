@@ -31,7 +31,9 @@
   [Style(name="horizontalCenter", type="Number")]
   [Style(name="verticalCenter", type="Number")]
   [Style(name="dock", type="Boolean")]
-  [Style(name="align", type="String")]
+  
+  [Style(name="vAlign", type="String", enumeration="top,middle,bottom")]
+  [Style(name="hAlign", type="String", enumeration="left,center,right")]
   
   [Style(name="marginLeft", type="Number")]
   [Style(name="marginRight", type="Number")]
@@ -50,6 +52,7 @@
   {
     public function Component()
     {
+      style = new StyleAwareActor();
       _behaviors = new CompositeBehavior(this);
       addEventListener("stylesChanged", onStylesChanged);
     }
@@ -59,6 +62,7 @@
     [Bindable(event="behaviorsChanged")]
     [ArrayElementType("reflex.behaviors.IBehavior")]
     [Inspectable(name="Behaviors", type="Array")]
+    
     /**
      * A dynamic object or hash map of behavior objects. <code>behaviors</code>
      * is effectively read-only, but setting either an IBehavior or array of
@@ -73,6 +77,7 @@
      *   &lt;/behaviors&gt;
      * &lt;/Component&gt;
      */
+    
     public function get behaviors():*
     {
       return _behaviors;
@@ -209,12 +214,12 @@
         removeSkinPart(skin, 'skin');
     }
     
-    protected var _style:Object = new StyleAwareActor();
+    protected var _style:Object;
     reflex var stylesChanged:Boolean = false;
     
     public function get style():Object
     {
-      return _style ? _style['style'] || _style : null;
+      return _style;
     }
     
     public function set style(styleObject:Object):void

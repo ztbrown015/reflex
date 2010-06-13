@@ -4,11 +4,11 @@ package reflex.layouts
   
   import reflex.utilities.Utility;
   import reflex.utilities.layout.ILayoutUtility;
+  import reflex.utilities.styles.IStyleUtility;
   
   [Style(name="hAlign", type="String", enumeration="left,center,right")]
   [Style(name="vAlign", type="String", enumeration="top,middle,bottom")]
-  [Style(name="hGap", type="Number")]
-  [Style(name="vGap", type="Number")]
+  [Style(name="gap", type="Number")]
   
   public class AlgorithmicLayout extends Layout
   {
@@ -44,9 +44,10 @@ package reflex.layouts
       return position;
     }
     
-    protected function get horizontalAlign():Number
+    protected function getHorizontalAlign(object:Object):Number
     {
-      var align:String = getStyle('hAlign') || 'left';
+      var align:String = Utility.resolve(<>IStyleUtility.getStyle</>, object, 'hAlign') || 'left';
+      
       switch(align)
       {
         case 'left':
@@ -60,9 +61,9 @@ package reflex.layouts
       return 0;
     }
     
-    protected function get verticalAlign():Number
+    protected function getVerticalAlign(object:Object):Number
     {
-      var align:String = getStyle('vAlign') || 'top';
+      var align:String = Utility.resolve(<>IStyleUtility.getStyle</>, object, 'vAlign') || 'top';
       
       switch(align)
       {

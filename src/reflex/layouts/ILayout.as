@@ -14,6 +14,7 @@ package reflex.layouts
 		function set target(value:DisplayObjectContainer):void;
     
     function get padding():Padding;
+    function set padding(value:Padding):void;
     
 		function measure(children:Array):Point;
 		function update(children:Array):void;

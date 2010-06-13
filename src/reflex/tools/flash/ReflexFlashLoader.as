@@ -31,11 +31,18 @@ package reflex.tools.flash
       // here is no problem.
       root.stop();
       
-      graphics.beginFill(0, 0);
-      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+      stage.addEventListener(Event.RESIZE, onStageResize);
+      onStageResize(null);
       
       if(root.totalFrames > 1 && root && root.loaderInfo)
         root.loaderInfo.addEventListener(Event.INIT, initHandler);
+    }
+    
+    private function onStageResize(event:Event):void
+    {
+      graphics.clear();
+      graphics.beginFill(0, 0);
+      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
     }
     
     /**

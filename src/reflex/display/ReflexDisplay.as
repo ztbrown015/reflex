@@ -88,6 +88,7 @@
         return;
       
       _percentWidth = value;
+      _explicitWidth = NaN;
     }
     
     protected var _percentHeight:Number;
@@ -103,6 +104,7 @@
         return;
       
       _percentHeight = value;
+      _explicitHeight = NaN;
     }
     
     /**

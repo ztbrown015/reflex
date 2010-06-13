@@ -22,8 +22,8 @@ package reflex.layouts
         return super.measure(children);
       
       var width:Number, height:Number;
-      var hGap:Number = getStyle('hGap');
-      var point:Point = new Point(hGap, 0);
+      var gap:Number = getStyle('gap');
+      var point:Point = new Point(gap, 0);
       var margin:Padding;
       
       for each(var child:Object in children)
@@ -36,7 +36,7 @@ package reflex.layouts
           );
         width = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
         height = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
-        point.x += width + hGap + margin.left + margin.right;
+        point.x += width + gap + margin.left + margin.right;
         point.y = Math.max(point.y, height + margin.top + margin.bottom);
       }
       
@@ -49,17 +49,17 @@ package reflex.layouts
       var width:Number = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
       var height:Number = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
       
-      var dimensions:Point = getDimensions(null, false, children);
+      var dimensions:Point = getDimensions(null, true, children);
       var margin:Padding = new Padding(
         Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft') || 0,
         Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight') || 0,
         Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop') || 0
         );
-      var y:Number = ((dimensions.y - height) * verticalAlign) + margin.top;
+      var y:Number = ((dimensions.y - height) * getVerticalAlign(this)) + margin.top;
       
-      Utility.resolve(<>ILayoutUtility.move</>, child, position + margin.left, padding.top + y);
+      Utility.resolve(<>ILayoutUtility.move</>, child, position + margin.left, padding.top + y + ((dimensions.y - height - y) * getVerticalAlign(child)));
       
-      return position + width + getStyle('hGap') + margin.right;
+      return position + width + getStyle('gap') + margin.left + margin.right;
     }
     
     override protected function getDimensions(usedSpace:Point = null, withPadding:Boolean = true, children:Array = null):Point
@@ -70,22 +70,26 @@ package reflex.layouts
       if(!usedSpace)
         usedSpace = new Point();
       
-      var gapSpace:Number = getStyle('hGap') * (children && children.length ? children.length - 1 : 0);
+      var gapSpace:Number = getStyle('gap') * (children && children.length ? children.length - 1 : 0);
       
       if(withPadding)
-        return new Point(target.width - padding.left - padding.right - gapSpace,
-                         target.height - padding.top - padding.bottom).subtract(usedSpace);
+        return new Point(target.width - padding.left - padding.right - gapSpace - usedSpace.x,
+                         target.height - padding.top - padding.bottom);
       else
         return new Point(target.width, target.height).subtract(usedSpace);
     }
     
     override protected function getPercentRatio(total:Point, numChildren:Number):Point
     {
-      total.x /= (numChildren * 2);
-      total.x *= .01;
-      total.y = 1;
+      if(numChildren <= 1)
+        numChildren = 1;
       
-      return total;
+      var point:Point = total.clone();
+      point.x /= (numChildren * numChildren);
+      point.x *= .01;
+      point.y = 1;
+      
+      return point;
     }
   }
 }

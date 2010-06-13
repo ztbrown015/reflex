@@ -59,6 +59,14 @@ package reflex.layouts
       return getStyle('padding');
     }
     
+    public function set padding(value:Padding):void
+    {
+      if(value == getStyle('padding') || !value)
+        return;
+      
+      setStyle('padding', value);
+    }
+    
     private var _target:DisplayObjectContainer;
     
     [Bindable(event="targetChanged")]
@@ -168,8 +176,12 @@ package reflex.layouts
       index = 0;
       length = percentChildren.length;
       
+      totalPercent.x = Math.max(totalPercent.x, 100);
+      totalPercent.y = Math.max(totalPercent.y, 100);
+      
       var percentRatio:Point = getPercentRatio(totalPercent, length);
       var total:Point = getDimensions(usedSpace, true, children);
+      
       var size:Point = new Point();
       
       for(; index < length; index++)
@@ -179,18 +191,25 @@ package reflex.layouts
         percent.x = Utility.resolve(<>ILayoutUtility.getPercentWidth</>, child, total.x) * percentRatio.x;
         percent.y = Utility.resolve(<>ILayoutUtility.getPercentHeight</>, child, total.y) * percentRatio.y;
         
-        margin.left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft');
-        margin.right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight');
-        margin.top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop');
-        margin.bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom');
-        
         size.x = percent.x || Utility.resolve(<>ILayoutUtility.getWidth</>, child);
         size.y = percent.y || Utility.resolve(<>ILayoutUtility.getHeight</>, child);
         
-        size.x -= isNaN(margin.left) ? 0 : margin.left;
-        size.x -= isNaN(margin.right) ? 0 : margin.right;
-        size.y -= isNaN(margin.top) ? 0 : margin.top;
-        size.y -= isNaN(margin.bottom) ? 0 : margin.bottom;
+        if(percent.x)
+        {
+          margin.left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft');
+          margin.right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight');
+          
+          size.x -= isNaN(margin.left) ? 0 : margin.left;
+          size.x -= isNaN(margin.right) ? 0 : margin.right;
+        }
+        if(percent.y)
+        {
+          margin.top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop');
+          margin.bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom');
+          
+          size.y -= isNaN(margin.top) ? 0 : margin.top;
+          size.y -= isNaN(margin.bottom) ? 0 : margin.bottom;
+        }
         
         Utility.resolve(<>ILayoutUtility.setSize</>, child, size.x, size.y);
       }
@@ -213,12 +232,13 @@ package reflex.layouts
     
     protected function getPercentRatio(total:Point, numChildren:Number):Point
     {
-      total.x /= (numChildren * 2)
-      total.y /= (numChildren * 2);
-      total.x *= .01;
-      total.y *= .01;
+      var point:Point = total.clone();
+      point.x /= (numChildren * 2)
+      point.y /= (numChildren * 2);
+      point.x *= .01;
+      point.y *= .01;
       
-      return total;
+      return point;
     }
     
     private function onMeasure():void
@@ -272,7 +292,7 @@ package reflex.layouts
     {
       var styleProp:String = event.property.toString();
       
-      if(styleProp.indexOf("padding") != -1)
+      if(styleProp.indexOf("padding") > 0)
       {
         var prop:String = String(styleProp.split('padding').pop()).toLowerCase();
         padding[prop] = getStyle(styleProp);
