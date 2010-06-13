@@ -33,6 +33,11 @@
   [Style(name="dock", type="Boolean")]
   [Style(name="align", type="String")]
   
+  [Style(name="marginLeft", type="Number")]
+  [Style(name="marginRight", type="Number")]
+  [Style(name="marginTop", type="Number")]
+  [Style(name="marginBottom", type="Number")]
+  
   [Style(name="paddingLeft", type="Number")]
   [Style(name="paddingRight", type="Number")]
   [Style(name="paddingTop", type="Number")]

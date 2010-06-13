@@ -73,29 +73,13 @@ package reflex.layouts
         width = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
         height = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
         
-        left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'left');
-        if(left == null)
-          left = NaN;
+        left = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'left'));
+        right = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'right'));
+        top = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'top'));
+        bottom = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'bottom'));
         
-        right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'right');
-        if(right == null)
-          right = NaN;
-        
-        top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'top');
-        if(top == null)
-          top = NaN;
-        
-        bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'bottom');
-        if(bottom == null)
-          bottom = NaN;
-        
-        horizontalCenter = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'horizontalCenter');
-        if(horizontalCenter == null)
-          horizontalCenter = NaN;
-        
-        verticalCenter = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'verticalCenter');
-        if(verticalCenter == null)
-          verticalCenter = NaN;
+        horizontalCenter = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'horizontalCenter'));
+        verticalCenter = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'verticalCenter'));
         
         if(!isNaN(left) && !isNaN(right))
         {

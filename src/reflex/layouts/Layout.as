@@ -16,6 +16,7 @@ package reflex.layouts
   import reflex.utilities.layout.ILayoutUtility;
   import reflex.utilities.listen;
   import reflex.utilities.metadata.IMetadataUtility;
+  import reflex.utilities.styles.IStyleUtility;
   
   [Style(name="padding", type="reflex.layouts.Padding")]
   [Style(name="paddingLeft", type="Number")]
@@ -116,6 +117,7 @@ package reflex.layouts
       var percentChildren:Array = [];
       
       var percent:Point = new Point(NaN, NaN);
+      var margin:Padding = new Padding(NaN, NaN, NaN, NaN);
       var totalPercent:Point = new Point();
       
       var index:int = 0;
@@ -133,6 +135,12 @@ package reflex.layouts
         else
           totalPercent.x += percent.x;
         
+        margin.left = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft'));
+        usedSpace.x += isNaN(margin.left) ? 0 : margin.left;
+        
+        margin.right = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight'));
+        usedSpace.x += isNaN(margin.right) ? 0 : margin.right;
+        
         percent.y = Utility.resolve(<>ILayoutUtility.getPercentHeight</>, child);
         
         if(isNaN(percent.y))
@@ -140,11 +148,21 @@ package reflex.layouts
         else
           totalPercent.y += percent.y;
         
+        margin.top = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop'));
+        usedSpace.y += isNaN(margin.top) ? 0 : margin.top;
+        
+        margin.bottom = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom'));
+        usedSpace.y += isNaN(margin.bottom) ? 0 : margin.bottom;
+        
         if(!isNaN(percent.x) || !isNaN(percent.y))
           percentChildren.push(child);
         
         percent.x = NaN;
         percent.y = NaN;
+        margin.left = NaN;
+        margin.right = NaN;
+        margin.top = NaN;
+        margin.bottom = NaN;
       }
       
       index = 0;
@@ -161,8 +179,18 @@ package reflex.layouts
         percent.x = Utility.resolve(<>ILayoutUtility.getPercentWidth</>, child, total.x) * percentRatio.x;
         percent.y = Utility.resolve(<>ILayoutUtility.getPercentHeight</>, child, total.y) * percentRatio.y;
         
+        margin.left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft');
+        margin.right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight');
+        margin.top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop');
+        margin.bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom');
+        
         size.x = percent.x || Utility.resolve(<>ILayoutUtility.getWidth</>, child);
         size.y = percent.y || Utility.resolve(<>ILayoutUtility.getHeight</>, child);
+        
+        size.x -= isNaN(margin.left) ? 0 : margin.left;
+        size.x -= isNaN(margin.right) ? 0 : margin.right;
+        size.y -= isNaN(margin.top) ? 0 : margin.top;
+        size.y -= isNaN(margin.bottom) ? 0 : margin.bottom;
         
         Utility.resolve(<>ILayoutUtility.setSize</>, child, size.x, size.y);
       }

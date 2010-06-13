@@ -101,6 +101,7 @@ package reflex.styles
         return false;
       
       var oldValue:* = styles[styleProp];
+      
       var success:Boolean = delete styles[styleProp];
       
       dispatchEvent(new PropertyChangeEvent('stylesChanged', false, false, PropertyChangeEventKind.DELETE, styleProp, oldValue, undefined, this));

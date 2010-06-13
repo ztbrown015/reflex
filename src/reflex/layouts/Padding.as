@@ -7,9 +7,9 @@ package reflex.layouts
     public function Padding(left:Number = 0, right:Number = 0, top:Number = 0, bottom:Number = 0)
     {
       this.left = left;
-      this.right = left;
-      this.top = left;
-      this.bottom = left;
+      this.right = right;
+      this.top = top;
+      this.bottom = bottom;
     }
     
     [Bindable]

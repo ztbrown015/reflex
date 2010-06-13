@@ -4,6 +4,7 @@ package reflex.layouts
   
   import reflex.utilities.Utility;
   import reflex.utilities.layout.ILayoutUtility;
+  import reflex.utilities.styles.IStyleUtility;
   
   [LayoutProperty(name="width", measure="true")]
   [LayoutProperty(name="height", measure="true")]
@@ -23,13 +24,20 @@ package reflex.layouts
       var width:Number, height:Number;
       var hGap:Number = getStyle('hGap');
       var point:Point = new Point(hGap, 0);
+      var margin:Padding;
       
       for each(var child:Object in children)
       {
+        margin = new Padding(
+          Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft') || 0,
+          Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight') || 0,
+          Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop') || 0,
+          Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom') || 0
+          );
         width = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
         height = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
-        point.x += width + hGap;
-        point.y = Math.max(point.y, height);
+        point.x += width + hGap + margin.left + margin.right;
+        point.y = Math.max(point.y, height + margin.top + margin.bottom);
       }
       
       return point;
@@ -42,11 +50,16 @@ package reflex.layouts
       var height:Number = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
       
       var dimensions:Point = getDimensions(null, false, children);
-      var y:Number = (dimensions.y - height) * verticalAlign;
+      var margin:Padding = new Padding(
+        Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft') || 0,
+        Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight') || 0,
+        Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop') || 0
+        );
+      var y:Number = ((dimensions.y - height) * verticalAlign) + margin.top;
       
-      Utility.resolve(<>ILayoutUtility.move</>, child, position, padding.top + y);
+      Utility.resolve(<>ILayoutUtility.move</>, child, position + margin.left, padding.top + y);
       
-      return position + width + getStyle('hGap');
+      return position + width + getStyle('hGap') + margin.right;
     }
     
     override protected function getDimensions(usedSpace:Point = null, withPadding:Boolean = true, children:Array = null):Point

@@ -23,12 +23,15 @@ package reflex.graphics
   [Style(name="dock")]
   [Style(name="align")]
   
+  [Style(name="marginLeft", type="Number")]
+  [Style(name="marginRight", type="Number")]
+  [Style(name="marginTop", type="Number")]
+  [Style(name="marginBottom", type="Number")]
+  
   public class Graphic extends StyleAwareActor implements IDrawable, IMeasurable, IMovable, IStyleAware
   {
     public function Graphic(target:Sprite = null)
     {
-      style = new StyleAwareActor();
-      
       addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
       addEventListener('stylesChanged', onPropertyChange);
       
