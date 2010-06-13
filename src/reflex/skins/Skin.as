@@ -7,6 +7,7 @@ package reflex.skins
   
   import mx.core.IStateClient2;
   
+  import reflex.graphics.IDrawable;
   import reflex.utilities.Utility;
   import reflex.utilities.metadata.IMetadataUtility;
   import reflex.utilities.states.IStateUtility;
@@ -19,7 +20,7 @@ package reflex.skins
    * adding children to the Sprite, or both.
    * @alpha
    */
-  public class Skin extends EventDispatcher implements ISkin, IStateClient2 //, IMeasurable
+  public class Skin extends EventDispatcher implements ISkin/*, IStateClient2*/ //, IMeasurable
   {
     public function Skin()
     {
@@ -37,6 +38,12 @@ package reflex.skins
     public function set children(values:Array):void
     {
       _children = [].concat(values);
+      
+      if(target)
+      {
+        detachFrom(target);
+        attachTo(target);
+      }
     }
     
     private var _currentState:String;
@@ -72,13 +79,13 @@ package reflex.skins
       if(_target == value)
         return;
       
-      if(target)
-        detachFrom(target);
+      if(_target)
+        detachFrom(_target);
       
       _target = value;
       
-      if(target)
-        attachTo(target);
+      if(_target)
+        attachTo(_target);
     }
     
     protected function attachTo(target:Sprite):void
@@ -116,14 +123,20 @@ package reflex.skins
         ISkinnable(to).addSkinPart(part, 'id' in part ? part['id'] : '');
       else if(part is DisplayObject)
         to.addChild(DisplayObject(part));
+      // This happens in Component too, but keep it here since we aren't guaranteed 
+      // that our target extends reflex.components.Component.
+      if(part is IDrawable)
+        IDrawable(part).target = to;
     }
     
     protected function detachSkinPart(part:Object, from:Sprite):void
     {
       if(from is ISkinnable)
         ISkinnable(from).removeSkinPart(part, 'id' in part ? part['id'] : '');
-      else if(part is DisplayObject)
+      else if(part is DisplayObject && from.contains(DisplayObject(part)))
         from.removeChild(DisplayObject(part));
+      if(part is IDrawable)
+        IDrawable(part).target = null;
     }
   }
 }

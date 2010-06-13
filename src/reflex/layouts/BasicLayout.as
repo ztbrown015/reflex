@@ -1,12 +1,10 @@
 package reflex.layouts
 {
   import flash.geom.Point;
-  import flash.geom.Rectangle;
   
-  import reflex.styles.hasStyle;
-  import reflex.styles.resolveStyle;
   import reflex.utilities.Utility;
   import reflex.utilities.layout.ILayoutUtility;
+  import reflex.utilities.styles.IStyleUtility;
   
   [LayoutProperty(name="style.left", measure="true")]
   [LayoutProperty(name="style.right", measure="true")]
@@ -31,77 +29,100 @@ package reflex.layouts
       
       for each(var item:Object in children)
       {
-        xp = item.x + Utility.resolve(<>ILayoutUtility.resolveWidth</>, item);
-        yp = item.y + Utility.resolve(<>ILayoutUtility.resolveHeight</>, item);
+        xp = Utility.resolve(<>ILayoutUtility.getX</>, item) + Utility.resolve(<>ILayoutUtility.getWidth</>, item);
+        yp = Utility.resolve(<>ILayoutUtility.getY</>, item) + Utility.resolve(<>ILayoutUtility.getHeight</>, item);
+        
         if(!isNaN(xp))
           point.x = Math.max(point.x, xp);
         if(!isNaN(yp))
           point.y = Math.max(point.y, yp);
       }
+      
       return point;
     }
     
-    override public function update(children:Array, rectangle:Rectangle):void
+    override public function update(children:Array):void
     {
-      super.update(children, rectangle);
+      super.update(children);
       
+      if(!children || children.length == 0)
+        return;
+      
+      var dimensions:Point = getDimensions(null, true);
+      
+      var child:Object;
       var width:Number = 0;
       var height:Number = 0;
-      var left:Number = 0;
-      var right:Number = 0;
-      var top:Number = 0;
-      var bottom:Number = 0;
-      var horizontalCenter:Number = 0;
-      var verticalCenter:Number = 0;
+      var x:Number = 0;
+      var y:Number = 0;
       
-      for each(var child:Object in children)
+      var left:*;
+      var right:*;
+      var top:*;
+      var bottom:*;
+      var horizontalCenter:*;
+      var verticalCenter:*;
+      
+      var index:int = 0;
+      var length:int = children.length;
+      
+      for(; index < length; index++)
       {
-        width = Utility.resolve(<>ILayoutUtility.resolveWidth</>, child);
-        height = Utility.resolve(<>ILayoutUtility.resolveHeight</>, child);
-        left = resolveStyle(child, "left") as Number;
-        right = resolveStyle(child, "right") as Number;
-        top = resolveStyle(child, "top") as Number;
-        bottom = resolveStyle(child, "bottom") as Number;
-        horizontalCenter = resolveStyle(child, "horizontalCenter") as Number;
-        verticalCenter = resolveStyle(child, "verticalCenter") as Number;
+        child = children[index];
         
-        if(hasStyle(child, "left") && hasStyle(child, "right"))
-        {
-          child.x = left;
-          width = rectangle.width - child.x - right;
-        }
-        else if(hasStyle(child, "left"))
-        {
-          child.x = resolveStyle(child, "left") as Number;
-        }
-        else if(hasStyle(child, "right"))
-        {
-          child.x = rectangle.width - width - right;
-        }
-        else if(hasStyle(child, "horizontalCenter"))
-        {
-          child.x = rectangle.width / 2 - width / 2;
-        }
+        width = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
+        height = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
         
-        if(hasStyle(child, "top") && hasStyle(child, "bottom"))
+        left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'left');
+        if(left == null)
+          left = NaN;
+        
+        right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'right');
+        if(right == null)
+          right = NaN;
+        
+        top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'top');
+        if(top == null)
+          top = NaN;
+        
+        bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'bottom');
+        if(bottom == null)
+          bottom = NaN;
+        
+        horizontalCenter = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'horizontalCenter');
+        if(horizontalCenter == null)
+          horizontalCenter = NaN;
+        
+        verticalCenter = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'verticalCenter');
+        if(verticalCenter == null)
+          verticalCenter = NaN;
+        
+        if(!isNaN(left) && !isNaN(right))
         {
-          child.y = top;
-          height = rectangle.height - child.y - bottom;
+          x = left;
+          width = dimensions.x - x - right;
         }
-        else if(hasStyle(child, "top"))
+        else if(!isNaN(left))
+          x = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'left') as Number;
+        else if(!isNaN(right))
+          x = dimensions.x - width - right;
+        else if(!isNaN(horizontalCenter))
+          x = ((dimensions.x - width) * 0.5) + horizontalCenter;
+        
+        if(!isNaN(top) && !isNaN(bottom))
         {
-          child.y = top;
+          y = top;
+          height = dimensions.y - y - bottom;
         }
-        else if(hasStyle(child, "bottom"))
-        {
-          child.y = rectangle.height - height - bottom;
-        }
-        else if(hasStyle(child, "verticalCenter"))
-        {
-          child.y = rectangle.height / 2 - height / 2;
-        }
+        else if(!isNaN(top))
+          y = top;
+        else if(!isNaN(bottom))
+          y = dimensions.y - height - bottom;
+        else if(!isNaN(verticalCenter))
+          y = ((dimensions.y - height) * 0.5) + verticalCenter;
         
         Utility.resolve(<>ILayoutUtility.setSize</>, child, width, height);
+        Utility.resolve(<>ILayoutUtility.move</>, child, x, y);
       }
     }
   

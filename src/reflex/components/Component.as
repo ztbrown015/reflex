@@ -3,12 +3,13 @@
   import flash.display.DisplayObject;
   import flash.events.Event;
   
-  import mx.core.IStateClient2;
+  import mx.events.PropertyChangeEvent;
+  import mx.events.PropertyChangeEventKind;
   
   import reflex.behaviors.CompositeBehavior;
   import reflex.behaviors.IBehavioral;
   import reflex.display.Container;
-  import reflex.events.InvalidationEvent;
+  import reflex.graphics.IDrawable;
   import reflex.skins.ISkin;
   import reflex.skins.ISkinnable;
   import reflex.styles.IStyleAware;
@@ -18,23 +19,34 @@
   
   use namespace reflex;
   
-  [Style(name="left")]
-  [Style(name="right")]
-  [Style(name="top")]
-  [Style(name="bottom")]
-  [Style(name="horizontalCenter")]
-  [Style(name="verticalCenter")]
-  [Style(name="dock")]
-  [Style(name="align")]
+  [Event(name="currentStateChanged", type="flash.events.Event")]
+  [Event(name="behaviorsChanged", type="flash.events.Event")]
+  [Event(name="skinChanged", type="flash.events.Event")]
+  [Event(name="stylesChanged", type="flash.events.Event")]
+  
+  [Style(name="left", type="Object")]
+  [Style(name="right", type="Object")]
+  [Style(name="top", type="Object")]
+  [Style(name="bottom", type="Object")]
+  [Style(name="horizontalCenter", type="Number")]
+  [Style(name="verticalCenter", type="Number")]
+  [Style(name="dock", type="Boolean")]
+  [Style(name="align", type="String")]
+  
+  [Style(name="paddingLeft", type="Number")]
+  [Style(name="paddingRight", type="Number")]
+  [Style(name="paddingTop", type="Number")]
+  [Style(name="paddingBottom", type="Number")]
   
   /**
    * @alpha
    */
-  public class Component extends Container implements IBehavioral, ISkinnable, IStyleAware, IStateClient2
+  public class Component extends Container implements IBehavioral, ISkinnable, IStyleAware/*, IStateClient2*/
   {
     public function Component()
     {
       _behaviors = new CompositeBehavior(this);
+      addEventListener("stylesChanged", onStylesChanged);
     }
     
     private var _behaviors:CompositeBehavior;
@@ -144,8 +156,16 @@
       if(name in this)
         this[name] = part;
       
+      if(children.indexOf(part) == -1)
+        children.push(part);
+      
       if(part is DisplayObject)
         addChild(DisplayObject(part));
+      
+      // This happens in Skin too, but keep it here since we aren't guaranteed 
+      // that skin extends reflex.skins.Skin.
+      if(part is IDrawable)
+        IDrawable(part).target = this;
       
       return part;
     }
@@ -155,8 +175,15 @@
       if(name in this)
         this[name] = null;
       
+      var i:int = children.indexOf(part);
+      if(i != -1)
+        children.splice(i, 1);
+      
       if(part is DisplayObject)
         removeChild(DisplayObject(part));
+      
+      if(part is IDrawable)
+        IDrawable(part).target = null;
       
       return part;
     }
@@ -177,11 +204,12 @@
         removeSkinPart(skin, 'skin');
     }
     
-    protected var _style:IStyleAware = new StyleAwareActor();
+    protected var _style:Object = new StyleAwareActor();
+    reflex var stylesChanged:Boolean = false;
     
     public function get style():Object
     {
-      return _style['style'] || _style;
+      return _style ? _style['style'] || _style : null;
     }
     
     public function set style(styleObject:Object):void
@@ -189,11 +217,26 @@
       if(_style === styleObject)
         return;
       
-      _style.style = styleObject;
+      if(!_style)
+        _style = styleObject;
+      else
+        _style['style'] = styleObject;
+      
+      stylesChanged = true;
+      
+      invalidateNotifications();
     }
     
     public function clearStyle(styleProp:String):Boolean
     {
+      var oldValue:* = getStyle(styleProp);
+      
+      stylesChanged = true;
+      
+      dispatchEvent(new PropertyChangeEvent('stylesChanged', false, false, PropertyChangeEventKind.DELETE, styleProp, oldValue, undefined, this));
+      
+      invalidateNotifications();
+      
       return delete _style[styleProp];
     }
     
@@ -204,12 +247,24 @@
     
     public function setStyle(styleProp:String, newValue:*):void
     {
+      var oldValue:* = getStyle(styleProp);
+      
       style[styleProp] = newValue;
+      
+      dispatchEvent(new PropertyChangeEvent('stylesChanged', false, false, PropertyChangeEventKind.UPDATE, styleProp, oldValue, newValue, this));
+      
+      stylesChanged = true;
+      
+      invalidateNotifications();
     }
     
     override protected function onNotifyPhase():void
     {
       super.onNotifyPhase();
+      
+      if(stylesChanged)
+        dispatchEvent(new Event("stylesChanged"));
+      stylesChanged = false;
       
       if(behaviorsChanged)
         dispatchEvent(new Event("behaviorsChanged"));
@@ -222,6 +277,20 @@
       if(currentStateChanged)
         dispatchEvent(new Event("currentStateChanged"));
       currentStateChanged = false;
+    }
+    
+    protected function onStylesChanged(event:Event):void
+    {
+      if(event is PropertyChangeEvent)
+      {
+        var styleProp:String = PropertyChangeEvent(event).property.toString();
+        
+        if(styleProp.indexOf("padding") > 0)
+        {
+          var prop:String = String(styleProp.split('padding').pop()).toLowerCase();
+          layout.padding[prop] = getStyle(styleProp);
+        }
+      }
     }
   }
 }

@@ -1,18 +1,21 @@
 package reflex.layouts
 {
-	import flash.events.IEventDispatcher;
+	import flash.display.DisplayObjectContainer;
 	import flash.geom.Point;
-	import flash.geom.Rectangle;
+	
+	import reflex.styles.IStyleAware;
 	
 	/**
 	 * @alpha
 	 */
 	public interface ILayout
 	{
-		function get target():IEventDispatcher;
-		function set target(value:IEventDispatcher):void;
-		
+		function get target():DisplayObjectContainer;
+		function set target(value:DisplayObjectContainer):void;
+    
+    function get padding():Padding;
+    
 		function measure(children:Array):Point;
-		function update(children:Array, rectangle:Rectangle):void;
+		function update(children:Array):void;
 	}
 }

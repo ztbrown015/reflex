@@ -2,16 +2,13 @@ package reflex.utilities
 {
   import flash.display.MovieClip;
   
-  import reflex.utilities.invalidation.IInvalidationUtility;
-  import reflex.utilities.invalidation.InvalidationUtility;
-  import reflex.utilities.layout.ILayoutUtility;
-  import reflex.utilities.layout.LayoutUtility;
-  import reflex.utilities.metadata.IMetadataUtility;
-  import reflex.utilities.metadata.MetadataUtility;
-  import reflex.utilities.states.IStateUtility;
-  import reflex.utilities.states.StateUtility;
+  import reflex.utilities.invalidation.*;
+  import reflex.utilities.layout.*;
+  import reflex.utilities.metadata.*;
+  import reflex.utilities.states.*;
+  import reflex.utilities.styles.*;
 
-  [Mixin]
+  [Mixin] // Adds this class to the list of classes that the ReflexApplicationLoader will statically initialize
   public class ReflexDefaults
   {
     public static function init(root:MovieClip = null):void
@@ -19,6 +16,7 @@ package reflex.utilities
       Utility.registerUtility(IInvalidationUtility, new InvalidationUtility());
       Utility.registerUtility(IMetadataUtility, new MetadataUtility());
       Utility.registerUtility(ILayoutUtility, new LayoutUtility());
+      Utility.registerUtility(IStyleUtility, new StyleUtility());
       Utility.registerUtility(IStateUtility, new StateUtility());
     }
   }

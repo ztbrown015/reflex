@@ -1,8 +1,13 @@
 package reflex.styles
 {
+  import flash.events.Event;
+  import flash.events.EventDispatcher;
   import flash.utils.Proxy;
   import flash.utils.describeType;
   import flash.utils.flash_proxy;
+  
+  import mx.events.PropertyChangeEvent;
+  import mx.events.PropertyChangeEventKind;
   
   use namespace flash_proxy;
   
@@ -33,7 +38,7 @@ package reflex.styles
     public function StyleAwareActor(styleObject:Object = null)
     {
       if(!styleObject)
-        return;
+        styleObject = {};
       
       style = styleObject;
     }
@@ -92,7 +97,15 @@ package reflex.styles
     
     public function clearStyle(styleProp:String):Boolean
     {
-      return styleProp in styles ? delete styles[styleProp] : false;
+      if(!(styleProp in styles))
+        return false;
+      
+      var oldValue:* = styles[styleProp];
+      var success:Boolean = delete styles[styleProp];
+      
+      dispatchEvent(new PropertyChangeEvent('stylesChanged', false, false, PropertyChangeEventKind.DELETE, styleProp, oldValue, undefined, this));
+      
+      return success;
     }
     
     public function getStyle(styleProp:String):*
@@ -102,7 +115,13 @@ package reflex.styles
     
     public function setStyle(styleProp:String, newValue:*):void
     {
+      var oldValue:* = styles[styleProp];
+      
+      if(oldValue == newValue)
+        return;
+      
       styles[styleProp] = newValue;
+      dispatchEvent(new PropertyChangeEvent('stylesChanged', false, false, PropertyChangeEventKind.UPDATE, styleProp, oldValue, newValue, this));
     }
     
     override flash_proxy function callProperty(name:*, ... parameters):*
@@ -116,18 +135,32 @@ package reflex.styles
     
     override flash_proxy function setProperty(name:*, value:*):void
     {
-      if(name in propertiesMap)
-        this[name] = value;
-      else
+      try
+      {
+        if(name in propertiesMap)
+          this[name] = value;
+        else
+          setStyle(name, value);
+      }
+      catch(e:Error)
+      {
         setStyle(name, value);
+      }
     }
     
     override flash_proxy function getProperty(name:*):*
     {
-      if(name in this)
-        return this[name];
-      
-      return getStyle(name);
+      try
+      {
+        if(name in this)
+          return this[name];
+        
+        return getStyle(name);
+      }
+      catch(e:Error)
+      {
+        return getStyle(name);
+      }
     }
     
     override flash_proxy function hasProperty(name:*):Boolean
@@ -142,14 +175,14 @@ package reflex.styles
       if(index == 0)
       {
         names.length = 0;
-        var prop:String;
-        for(prop in propertiesMap)
-          names.push(prop);
-        for(prop in styles)
+        for(var prop:String in styles)
           names.push(prop);
       }
       
-      return names[index];
+      if(index < names.length)
+        return index + 1;
+      
+      return 0;
     }
     
     override flash_proxy function nextName(index:int):String
@@ -160,6 +193,33 @@ package reflex.styles
     override flash_proxy function nextValue(index:int):*
     {
       return this[names[index]];
+    }
+    
+    private var dispatcher:EventDispatcher = new EventDispatcher();
+    
+    public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = true):void
+    {
+      dispatcher.addEventListener(type, listener, useCapture, priority, useWeakReference);
+    }
+    
+    public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void
+    {
+      dispatcher.removeEventListener(type, listener, useCapture);
+    }
+    
+    public function dispatchEvent(event:Event):Boolean
+    {
+      return dispatcher.dispatchEvent(event);
+    }
+    
+    public function hasEventListener(type:String):Boolean
+    {
+      return dispatcher.hasEventListener(type);
+    }
+    
+    public function willTrigger(type:String):Boolean
+    {
+      return dispatcher.willTrigger(type);
     }
     
     generatePropertiesMap(new StyleAwareActor());

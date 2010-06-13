@@ -1,19 +1,12 @@
 package reflex.graphics
 {
-  [Style(name="left")]
-  [Style(name="right")]
-  [Style(name="top")]
-  [Style(name="bottom")]
-  [Style(name="horizontalCenter")]
-  [Style(name="verticalCenter")]
-  [Style(name="dock")]
-  [Style(name="align")]
-  
+  import flash.display.Sprite;
+
   public class Rect extends Graphic
   {
-    public function Rect()
+    public function Rect(target:Sprite = null)
     {
-      super();
+      super(target);
     }
     
     override protected function renderGraphic():void

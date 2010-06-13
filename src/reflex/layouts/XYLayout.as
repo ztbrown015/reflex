@@ -18,18 +18,37 @@ package reflex.layouts
   {
     override public function measure(children:Array):Point
     {
-      var point:Point = new Point(0, 0);
+      var point:Point = super.measure(children);
+      
       for each(var item:Object in children)
       {
-        point.x = Math.max(point.x, item.x + Utility.resolve(<>ILayoutUtility.resolveWidth</>, item));
-        point.y = Math.max(point.y, item.y + Utility.resolve(<>ILayoutUtility.resolveHeight</>, item));
+        point.x = Math.max(point.x, item.x + Utility.resolve(<>ILayoutUtility.getWidth</>, item));
+        point.y = Math.max(point.y, item.y + Utility.resolve(<>ILayoutUtility.getHeight</>, item));
       }
       
       return point;
     }
     
-    override public function update(children:Array, rectangle:Rectangle):void
+    override public function update(children:Array):void
     {
+      super.update(children);
+      
+      var rectangle:Rectangle = new Rectangle(target.x, target.y, target.width, target.height);
+      
+      var index:int = 0;
+      var length:int = children.length;
+      var child:Object;
+      
+      for(; index < length; index++)
+      {
+        child = children[index];
+        
+        
+        Utility.resolve(<>ILayoutUtility.move</>,
+          child,
+          Utility.resolve(<>ILayoutUtility.getX</>, child),
+          Utility.resolve(<>ILayoutUtility.getY</>, child));
+      }
     }
   }
 }

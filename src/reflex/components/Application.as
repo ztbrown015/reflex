@@ -44,9 +44,10 @@ package reflex.components
     
     private function onStageResize(event:Event):void
     {
-      width = stage.stageWidth;
-      height = stage.stageHeight;
+      _explicitWidth = isNaN(percentWidth) ? stage.stageWidth : percentWidth * 0.01 * stage.stageWidth;
+      _explicitHeight = isNaN(percentHeight) ? stage.stageHeight : percentHeight * 0.01 * stage.stageHeight;
       
+      invalidateSize();
       invalidateLayout();
     }
   }

@@ -4,17 +4,18 @@ package reflex.utilities
   import flash.events.IEventDispatcher;
   
   /**
-   * Returns a function that automatically removes the event listener after an
-   * event is dispatched the first time. Pass this as the second argument to
-   * IEventDispatcher#addEventListener, passing in the real handler:
-   * <code>dispatcher.addEventListener("someEvent", oneShot(someEventHandler, dispatcher));</code>
+   * Returns a function that will selectively pass in the event argument to
+   * an event listener depending on whether that listener accepts an argument.
    *
-   * This will also drop off the event argument if your handler function doesn't
-   * accept any arguments, so you can write a handler like this:
-   * <code>function onSomeEvent():void
-   * {
-   *   //Do stuff
-   * }</code>
+   * If the second argument is specified, the handler will automatically
+   * remove the event listener after the first time the event is fired.
+   *
+   * <code>
+   * function someFunction(){
+   *   // Do something without reference to the event.
+   * }
+   * dispatcher.addEventListener("someEvent", oneShot(someFunction, dispatcher));
+   * </code>
    */
   public function listen(func:Function, oneShotScope:IEventDispatcher = null):Function
   {

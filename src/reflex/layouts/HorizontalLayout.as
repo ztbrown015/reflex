@@ -1,7 +1,6 @@
 package reflex.layouts
 {
   import flash.geom.Point;
-  import flash.geom.Rectangle;
   
   import reflex.utilities.Utility;
   import reflex.utilities.layout.ILayoutUtility;
@@ -12,51 +11,68 @@ package reflex.layouts
   /**
    * @alpha
    **/
-  public class HorizontalLayout extends Layout implements ILayout
+  public class HorizontalLayout extends AlgorithmicLayout
   {
-    
-    [Bindable]
-    public var gap:Number = 5;
-    
     override public function measure(children:Array):Point
     {
       super.measure(children);
       
-      var point:Point = new Point(gap, 0);
+      if(!children || children.length == 0)
+        return super.measure(children);
+      
       var width:Number, height:Number;
+      var hGap:Number = getStyle('hGap');
+      var point:Point = new Point(hGap, 0);
       
       for each(var child:Object in children)
       {
-        width = Utility.resolve(<>ILayoutUtility.resolveWidth</>, child);
-        height = Utility.resolve(<>ILayoutUtility.resolveHeight</>, child);
-        point.x += width + gap;
+        width = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
+        height = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
+        point.x += width + hGap;
         point.y = Math.max(point.y, height);
       }
       
       return point;
     }
     
-    override public function update(children:Array, rectangle:Rectangle):void
+    override protected function algorithm(children:Array, index:int, position:Number):Number
     {
-      super.update(children, rectangle);
+      var child:Object = children[index];
+      var width:Number = Utility.resolve(<>ILayoutUtility.getWidth</>, child);
+      var height:Number = Utility.resolve(<>ILayoutUtility.getHeight</>, child);
       
-      var position:Number = gap;
-      var length:int = children.length;
-      var child:Object, width:Number, height:Number;
+      var dimensions:Point = getDimensions(null, false, children);
+      var y:Number = (dimensions.y - height) * verticalAlign;
       
-      for(var i:int = 0; i < length; i++)
-      {
-        child = children[i];
-        
-        width = Utility.resolve(<>ILayoutUtility.resolveWidth</>, child);
-        height = Utility.resolve(<>ILayoutUtility.resolveHeight</>, child);
-        
-        Utility.resolve(<>ILayoutUtility.setSize</>, child, width, height);
-        Utility.resolve(<>ILayoutUtility.move</>, child, position, (rectangle.height - height) * 0.5);
-        
-        position += width + gap;
-      }
+      Utility.resolve(<>ILayoutUtility.move</>, child, position, padding.top + y);
+      
+      return position + width + getStyle('hGap');
     }
-  
+    
+    override protected function getDimensions(usedSpace:Point = null, withPadding:Boolean = true, children:Array = null):Point
+    {
+      if(!target)
+        return new Point();
+      
+      if(!usedSpace)
+        usedSpace = new Point();
+      
+      var gapSpace:Number = getStyle('hGap') * (children && children.length ? children.length - 1 : 0);
+      
+      if(withPadding)
+        return new Point(target.width - padding.left - padding.right - gapSpace,
+                         target.height - padding.top - padding.bottom).subtract(usedSpace);
+      else
+        return new Point(target.width, target.height).subtract(usedSpace);
+    }
+    
+    override protected function getPercentRatio(total:Point, numChildren:Number):Point
+    {
+      total.x /= (numChildren * 2);
+      total.x *= .01;
+      total.y = 1;
+      
+      return total;
+    }
   }
 }

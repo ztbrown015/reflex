@@ -5,19 +5,34 @@ package reflex.graphics
   import flash.events.EventDispatcher;
   
   import mx.events.PropertyChangeEvent;
+  import mx.events.PropertyChangeEventKind;
   
   import reflex.display.DisplayPhases;
   import reflex.display.IMeasurable;
   import reflex.display.IMovable;
+  import reflex.styles.IStyleAware;
+  import reflex.styles.StyleAwareActor;
   import reflex.utilities.listen;
   
-  public class Graphic extends EventDispatcher implements IDrawable, IMeasurable, IMovable
+  [Style(name="left")]
+  [Style(name="right")]
+  [Style(name="top")]
+  [Style(name="bottom")]
+  [Style(name="horizontalCenter")]
+  [Style(name="verticalCenter")]
+  [Style(name="dock")]
+  [Style(name="align")]
+  
+  public class Graphic extends StyleAwareActor implements IDrawable, IMeasurable, IMovable, IStyleAware
   {
-    public function Graphic()
+    public function Graphic(target:Sprite = null)
     {
-      super();
+      style = new StyleAwareActor();
       
       addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
+      addEventListener('stylesChanged', onPropertyChange);
+      
+      this.target = target;
     }
     
     private var _target:Sprite;
@@ -108,11 +123,11 @@ package reflex.graphics
     
     [PercentProxy("percentWidth")]
     [Bindable]
-    public var width:Number;
+    public var width:Number = 0;
     
     [PercentProxy("percentHeight")]
     [Bindable]
-    public var height:Number;
+    public var height:Number = 0;
     
     [Bindable]
     public  var percentWidth:Number;
@@ -135,7 +150,6 @@ package reflex.graphics
       
       invalidate();
     }
-    
     private function onPropertyChange(event:PropertyChangeEvent):void
     {
       invalidate();

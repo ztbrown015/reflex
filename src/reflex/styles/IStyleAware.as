@@ -1,6 +1,8 @@
 package reflex.styles
 {
-  public interface IStyleAware
+  import flash.events.IEventDispatcher;
+
+  public interface IStyleAware extends IEventDispatcher
   {
     function get style():Object;
     function set style(value:Object):void;

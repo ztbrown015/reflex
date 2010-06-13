@@ -16,13 +16,13 @@ package reflex.display
   // Default property that MXML sets when you define children MXML nodes.
   [DefaultProperty("children")]
   
-  [Event(name="childrenChanged", type="Event")]
-  [Event(name="layoutChanged", type="Event")]
+  [Event(name="childrenChanged", type="flash.events.Event")]
+  [Event(name="layoutChanged", type="flash.events.Event")]
   
   /**
    * @alpha
    */
-  public class Container extends ReflexDisplay implements IContainer, IInvalidating
+  public class Container extends ReflexDisplay implements IContainer
   {
     DisplayPhases;
     
@@ -30,10 +30,10 @@ package reflex.display
     {
       addEventListener(Event.ADDED, onAdded);
       
-      addEventListener(DisplayPhases.NOTIFY, function(... r):void{onNotifyPhase()}, false, 50);
-      addEventListener(DisplayPhases.CHILDREN, function(... r):void{onChildrenPhase()}, false, 50);
-      addEventListener(DisplayPhases.MEASURE, function(... r):void{onMeasurePhase()}, false, 50);
-      addEventListener(DisplayPhases.LAYOUT, function(... r):void{onLayoutPhase()}, false, 50);
+      addEventListener(DisplayPhases.NOTIFY, listen(onNotifyPhase), false, 50);
+      addEventListener(DisplayPhases.CHILDREN, listen(onChildrenPhase), false, 50);
+      addEventListener(DisplayPhases.MEASURE, listen(onMeasurePhase), false, 50);
+      addEventListener(DisplayPhases.LAYOUT, listen(onLayoutPhase), false, 50);
     }
     
     private function onAdded(event:Event):void
@@ -44,7 +44,7 @@ package reflex.display
       removeEventListener(Event.ADDED, onAdded);
     }
     
-    private var _children:Array;
+    private var _children:Array = [];
     reflex var childrenChanged:Boolean = false;
     
     [Bindable(event="childrenChanged")]
@@ -226,7 +226,7 @@ package reflex.display
       if(!layout)
         return;
       
-      layout.update(children, new Rectangle(y, x, width, height));
+      layout.update(children);
     }
   }
 }

@@ -1,15 +1,31 @@
 package reflex.utilities.layout
 {
+  import flash.display.DisplayObjectContainer;
+  
+  import reflex.display.IContainer;
   import reflex.display.IMeasurable;
   import reflex.display.IMovable;
 
   public class LayoutUtility implements ILayoutUtility
   {
-    public function LayoutUtility()
+    public function getChildren(object:Object):Array
     {
+      var children:Array = []
+        
+      if(object is IContainer)
+        children = IContainer(object).children;
+      else if(object is DisplayObjectContainer)
+      {
+        var index:int = -1;
+        var numChildren:int = DisplayObjectContainer(object).numChildren;
+        while(index < numChildren)
+          children.push(DisplayObjectContainer(object).getChildAt(++index));
+      }
+      
+      return children;
     }
     
-    public function resolveWidth(object:Object):Number
+    public function getWidth(object:Object):Number
     {
       if(object && 'width' in object)
         return object['width'];
@@ -17,10 +33,46 @@ package reflex.utilities.layout
       return NaN;
     }
     
-    public function resolveHeight(object:Object):Number
+    public function getHeight(object:Object):Number
     {
       if(object && 'height' in object)
         return object['height'];
+      
+      return NaN;
+    }
+    
+    public function getPercentWidth(object:Object, total:Number = 0):Number
+    {
+      if(object && 'percentWidth' in object && total > 0)
+        return object['percentWidth'] * .01 * total;
+      else if(total == 0)
+        return object['percentWidth'];
+      
+      return NaN;
+    }
+    
+    public function getPercentHeight(object:Object, total:Number = 0):Number
+    {
+      if(object && 'percentHeight' in object && total > 0)
+        return object['percentHeight'] * .01 * total;
+      else if(total == 0)
+        return object['percentHeight'];
+      
+      return NaN;
+    }
+    
+    public function getX(object:Object):Number
+    {
+      if(object && 'x' in object)
+        return object['x'];
+      
+      return NaN;
+    }
+    
+    public function getY(object:Object):Number
+    {
+      if(object && 'y' in object)
+        return object['y'];
       
       return NaN;
     }
