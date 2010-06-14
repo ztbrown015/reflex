@@ -89,9 +89,9 @@ package reflex.layouts
       return new Point(Math.min(size.x, size.x - usedSpace.x), size.y);
     }
     
-    override protected function getPercentRatio(total:Point):Point
+    override protected function getSpacePercent(totalSpace:Point, totalPercent:Point):Point
     {
-      return new Point(Math.min(1, total.x * .01) * .01, .01);
+      return new Point(totalSpace.x / totalPercent.x, totalSpace.y * .01);
     }
   }
 }

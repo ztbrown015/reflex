@@ -177,8 +177,7 @@ package reflex.layouts
       length = percentChildren.length;
       
       var total:Point = getDimensions(children, true, usedSpace);
-      
-      var percentRatio:Point = getPercentRatio(totalPercent);
+      var spacePercent:Point = getSpacePercent(total, totalPercent);
       
       var size:Point = new Point();
       var percentSize:Point = new Point();
@@ -187,34 +186,26 @@ package reflex.layouts
       {
         child = percentChildren[index];
         
-        percent.x = Utility.resolve(<>ILayoutUtility.getPercentWidth</>, child, total.x) * percentRatio.x;
-        percent.y = Utility.resolve(<>ILayoutUtility.getPercentHeight</>, child, total.y) * percentRatio.y;
+        size.x = Utility.resolve(<>ILayoutUtility.getPercentWidth</>, child, spacePercent.x);
+        size.y = Utility.resolve(<>ILayoutUtility.getPercentHeight</>, child, spacePercent.y);
         
-        size.x = percent.x || Utility.resolve(<>ILayoutUtility.getWidth</>, child);
-        size.y = percent.y || Utility.resolve(<>ILayoutUtility.getHeight</>, child);
+        margin.left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft');
+        margin.right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight');
         
-        if(percent.x)
-        {
-          margin.left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft');
-          margin.right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight');
-          
-          size.x -= isNaN(margin.left) ? 0 : margin.left;
-          size.x -= isNaN(margin.right) ? 0 : margin.right;
-          
-          percentSize.x += size.x;
-        }
-        if(percent.y)
-        {
-          margin.top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop');
-          margin.bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom');
-          
-          size.y -= isNaN(margin.top) ? 0 : margin.top;
-          size.y -= isNaN(margin.bottom) ? 0 : margin.bottom;
-          
-          percentSize.y += size.y;
-        }
+        size.x -= isNaN(margin.left) ? 0 : margin.left;
+        size.x -= isNaN(margin.right) ? 0 : margin.right;
         
-        excessSpace = total.clone().subtract(percentSize.clone());
+        percentSize.x += size.x;
+        
+        margin.top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop');
+        margin.bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom');
+        
+        size.y -= isNaN(margin.top) ? 0 : margin.top;
+        size.y -= isNaN(margin.bottom) ? 0 : margin.bottom;
+        
+        percentSize.y += size.y;
+        
+        excessSpace = total.subtract(percentSize);
         
         Utility.resolve(<>ILayoutUtility.setSize</>, child, size.x, size.y);
       }
@@ -239,9 +230,9 @@ package reflex.layouts
       return new Point(Math.min(size.x, size.x - usedSpace.x), Math.min(size.y, size.y - usedSpace.y));
     }
     
-    protected function getPercentRatio(total:Point):Point
+    protected function getSpacePercent(totalSpace:Point, totalPercent:Point):Point
     {
-      return new Point(.01, .01);
+      return new Point(totalSpace.x / totalPercent.x, totalSpace.y / totalPercent.y);
     }
     
     protected var excessSpace:Point = new Point();
