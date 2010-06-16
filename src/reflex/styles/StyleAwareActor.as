@@ -140,7 +140,7 @@ package reflex.styles
       {
         if(name in propertiesMap)
           this[name] = value;
-        else
+        else if(!(name is QName))
           setStyle(name, value);
       }
       catch(e:Error)

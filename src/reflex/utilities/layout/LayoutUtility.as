@@ -5,13 +5,15 @@ package reflex.utilities.layout
   import reflex.display.IContainer;
   import reflex.display.IMeasurable;
   import reflex.display.IMovable;
-
+  
+  use namespace rx_internal;
+  
   public class LayoutUtility implements ILayoutUtility
   {
     public function getChildren(object:Object):Array
     {
       var children:Array = []
-        
+      
       if(object is IContainer)
         children = IContainer(object).children;
       else if(object is DisplayObjectContainer)
@@ -27,23 +29,50 @@ package reflex.utilities.layout
     
     public function getWidth(object:Object):Number
     {
-      if(object && 'width' in object)
+      if(!object)
+        return NaN;
+      
+      if('width' in object)
         return object['width'];
       
       return NaN;
     }
     
+    public function setWidth(object:Object, value:Number):void
+    {
+      if(!object)
+        return;
+      
+      if('width' in object)
+        object['width'] = value;
+    }
+    
     public function getHeight(object:Object):Number
     {
-      if(object && 'height' in object)
+      if(!object)
+        return NaN;
+      
+      if('height' in object)
         return object['height'];
       
       return NaN;
     }
     
+    public function setHeight(object:Object, value:Number):void
+    {
+      if(!object)
+        return;
+      
+      if('height' in object)
+        object['height'] = value;
+    }
+    
     public function getPercentWidth(object:Object, total:Number = 0):Number
     {
-      if(object && 'percentWidth' in object && total > 0)
+      if(!object)
+        return NaN;
+      
+      if('percentWidth' in object && total > 0)
         return object['percentWidth'] * total;
       else if(total == 0)
         return object['percentWidth'];
@@ -53,7 +82,10 @@ package reflex.utilities.layout
     
     public function getPercentHeight(object:Object, total:Number = 0):Number
     {
-      if(object && 'percentHeight' in object && total > 0)
+      if(!object)
+        return NaN;
+      
+      if('percentHeight' in object && total > 0)
         return object['percentHeight'] * total;
       else if(total == 0)
         return object['percentHeight'];
@@ -63,10 +95,22 @@ package reflex.utilities.layout
     
     public function getX(object:Object):Number
     {
-      if(object && 'x' in object)
+      if(!object)
+        return NaN;
+      
+      if('x' in object)
         return object['x'];
       
       return NaN;
+    }
+    
+    public function setX(object:Object, value:Number):void
+    {
+      if(!object)
+        return;
+      
+      if('x' in object)
+        object['x'] = value;
     }
     
     public function getY(object:Object):Number
@@ -75,6 +119,12 @@ package reflex.utilities.layout
         return object['y'];
       
       return NaN;
+    }
+    
+    public function setY(object:Object, value:Number):void
+    {
+      if(object && 'y' in object)
+        object['y'] = value;
     }
     
     public function setSize(object:Object, newWidth:Number, newHeight:Number):void

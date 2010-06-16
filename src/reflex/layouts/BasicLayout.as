@@ -48,7 +48,7 @@ package reflex.layouts
       if(!children || children.length == 0)
         return;
       
-      var dimensions:Point = getDimensions(null, true);
+      var dimensions:Point = new Point(target.width, target.height);
       
       var child:Object;
       var width:Number = 0;

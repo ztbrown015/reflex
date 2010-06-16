@@ -4,6 +4,7 @@ package reflex.layouts
   import flash.events.Event;
   import flash.events.EventDispatcher;
   import flash.geom.Point;
+  import flash.utils.Dictionary;
   
   import mx.events.PropertyChangeEvent;
   import mx.events.PropertyChangeEventKind;
@@ -23,6 +24,10 @@ package reflex.layouts
   [Style(name="paddingRight", type="Number")]
   [Style(name="paddingTop", type="Number")]
   [Style(name="paddingBottom", type="Number")]
+  
+  [Style(name="hAlign", type="String", enumeration="left,center,right")]
+  [Style(name="vAlign", type="String", enumeration="top,middle,bottom")]
+  [Style(name="gap", type="Number")]
   
   /**
    * @alpha
@@ -91,7 +96,10 @@ package reflex.layouts
     
     protected function detachFrom(target:DisplayObjectContainer):void
     {
-      target.addEventListener("stylesChanged", onPropertyChange);
+      target.removeEventListener("stylesChanged", onPropertyChange);
+      
+      virtual.removeDimension('x');
+      virtual.removeDimension('y');
     }
     
     protected function attachTo(target:DisplayObjectContainer):void
@@ -105,11 +113,35 @@ package reflex.layouts
             IStyleAware(target).setStyle(styleProp, styles[styleProp]);
           else
             style[styleProp] = styles[styleProp];
+      
+      if('width' in target)
+        virtual.addDimension('x');
+      if('height' in target)
+        virtual.addDimension('y');
     }
     
     public function measure(children:Array):Point
     {
       return new Point();
+    }
+    
+    private var _virtual:Virtual;
+    
+    public function get virtual():Virtual
+    {
+      if(!_virtual)
+        virtual = new Virtual();
+      
+      return _virtual;
+    }
+    
+    public function set virtual(value:Virtual):void
+    {
+      if(value === _virtual)
+        return;
+      
+      _virtual = value;
+      invalidate();
     }
     
     public function update(children:Array):void
@@ -120,148 +152,277 @@ package reflex.layouts
       // We only have to process percentage based children here because those 
       // that measure or have explicit dimensions have already set them in measure.
       
-      var usedSpace:Point = new Point();
-      
-      var percentChildren:Array = [];
-      
-      var percent:Point = new Point(NaN, NaN);
-      var margin:Padding = new Padding(NaN, NaN, NaN, NaN);
-      var totalPercent:Point = new Point();
+      var dimensions:Object = virtual.dimensionNames;
+      var dimension:String;
       
       var index:int = 0;
-      var length:int = children.length;
+      var len:int = 0;
+      
+      var percentChildren:Dictionary = new Dictionary();
       var child:Object;
       
-      for(; index < length; index++)
+      var percent:Number = 0;
+      var totalPercent:Number = 0;
+      var numPercentChildren:int = 0;
+      var usedSpace:Number = 0;
+      var childSpace:Number = 0;
+      var margin:Number = 0;
+      var spaceForPercentChildren:Number = 0;
+      var spacePerCent:Number = 0;
+      var percentChildrenSpace:Number = 0;
+      var excessSpace:Number = 0;
+      
+      var alignment:Number = 0;
+      var position:Number = 0;
+      var childPosition:int = 0;
+      
+      for(dimension in dimensions)
       {
-        child = children[index];
+        index = 0;
+        len = children.length;
         
-        percent.x = Utility.resolve(<>ILayoutUtility.getPercentWidth</>, child);
+        for(; index < len; index++)
+        {
+          child = children[index];
+          percent = getChildPercent(child, dimension);
+          // This child doesn't have a percent size for this dimension
+          if(isNaN(percent))
+          {
+            childSpace = getChildSpace(child, dimension);
+            usedSpace += childSpace;
+            
+            if(child in percentChildren)
+              delete percentChildren[child];
+            
+            virtual.hasItem(child, dimension) ?
+              virtual.updateSize(child, childSpace, dimension) :
+              virtual.add(child, childSpace, dimension);
+            
+            setChildSpace(child, dimension, childSpace);
+          }
+          // Has a percent size for this dimension, tally it up.
+          else
+          {
+            totalPercent += percent;
+            percentChildren[child] = true;
+          }
+          
+          // Add any margins to the used space, we still want to count margins
+          // even on children with percent sizes.
+          margin = getMargin(child, dimension);
+          if(!isNaN(margin))
+            usedSpace += margin;
+          
+          percent = NaN;
+          margin = NaN;
+        }
         
-        if(isNaN(percent.x))
-          usedSpace.x += Utility.resolve(<>ILayoutUtility.getWidth</>, child);
-        else
-          totalPercent.x += percent.x;
+        //  Get the total space left over in this dimension after subtracting the
+        //  used space and the padding.
+        spaceForPercentChildren = getLayoutSpace(dimension, true, usedSpace, children.length);
         
-        margin.left = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft'));
-        usedSpace.x += isNaN(margin.left) ? 0 : margin.left;
+        //  Get the pixel values that 100% represents, a ratio of: space/cent (Space Per Cent)
+        //  if(totalPercent >= 100) spacePerCent >= 1;
+        //  if(totalPercent <= 100) spacePerCent <= 1;
+        spacePerCent = getSpacePerCent(spaceForPercentChildren, totalPercent, dimension);
         
-        margin.right = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight'));
-        usedSpace.x += isNaN(margin.right) ? 0 : margin.right;
+        //  Process the children with percent sizes in this dimension
+        for(child in percentChildren)
+        {
+          //  The pixel value of the space this child takes up.
+          childSpace = getChildPercent(child, dimension) * spacePerCent;
+          margin = getMargin(child, dimension);
+          
+          //  Subtract this child's margins from his size.
+          if(!isNaN(margin))
+            childSpace -= margin;
+          
+          virtual.hasItem(child, dimension) ?
+            virtual.updateSize(child, childSpace, dimension) :
+            virtual.add(child, childSpace, dimension);
+          
+          //  Set his size in this dimension
+          setChildSpace(child, dimension, childSpace);
+          
+          percentChildrenSpace += childSpace;
+          
+          delete percentChildren[child];
+        }
         
-        percent.y = Utility.resolve(<>ILayoutUtility.getPercentHeight</>, child);
+        excessSpace = spaceForPercentChildren - percentChildrenSpace;
         
-        if(isNaN(percent.y))
-          usedSpace.y += Utility.resolve(<>ILayoutUtility.getHeight</>, child);
-        else
-          totalPercent.y += percent.y;
+        index = 0;
+        len = children.length;
         
-        margin.top = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop'));
-        usedSpace.y += isNaN(margin.top) ? 0 : margin.top;
+        for(; index < len; index++)
+        {
+          child = children[index];
+          
+          childSpace = getChildSpace(child, dimension);
+          
+          if(index == 0)
+            position = getLayoutPadding(dimension, -1) + excessSpace * (getAlignment(child, dimension) || 0);
+          
+          childPosition = getLayoutPosition(child, dimension, position);
+          
+          setLayoutPosition(child, dimension, childPosition);
+          
+          virtual.addAt(child, childPosition, childSpace, dimension);
+          
+          position = updateLayoutPosition(child, dimension, position);
+        }
         
-        margin.bottom = parseFloat(Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom'));
-        usedSpace.y += isNaN(margin.bottom) ? 0 : margin.bottom;
-        
-        if(!isNaN(percent.x) || !isNaN(percent.y))
-          percentChildren.push(child);
-        
-        percent.x = NaN;
-        percent.y = NaN;
-        margin.left = NaN;
-        margin.right = NaN;
-        margin.top = NaN;
-        margin.bottom = NaN;
-      }
-      
-      index = 0;
-      length = percentChildren.length;
-      
-      var total:Point = getDimensions(children, true, usedSpace);
-      var spacePercent:Point = getSpacePercent(total, totalPercent);
-      
-      var size:Point = new Point();
-      var percentSize:Point = new Point();
-      
-      for(; index < length; index++)
-      {
-        child = percentChildren[index];
-        
-        size.x = Utility.resolve(<>ILayoutUtility.getPercentWidth</>, child, spacePercent.x);
-        size.y = Utility.resolve(<>ILayoutUtility.getPercentHeight</>, child, spacePercent.y);
-        
-        margin.left = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginLeft');
-        margin.right = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginRight');
-        
-        size.x -= isNaN(margin.left) ? 0 : margin.left;
-        size.x -= isNaN(margin.right) ? 0 : margin.right;
-        
-        percentSize.x += size.x;
-        
-        margin.top = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginTop');
-        margin.bottom = Utility.resolve(<>IStyleUtility.getStyle</>, child, 'marginBottom');
-        
-        size.y -= isNaN(margin.top) ? 0 : margin.top;
-        size.y -= isNaN(margin.bottom) ? 0 : margin.bottom;
-        
-        percentSize.y += size.y;
-        
-        excessSpace = total.subtract(percentSize);
-        
-        Utility.resolve(<>ILayoutUtility.setSize</>, child, size.x, size.y);
+        alignment = 0;
+        spacePerCent = 0;
+        position = 0;
+        childSpace = 0;
+        excessSpace = 0;
+        totalPercent = 0;
       }
     }
     
-    protected function getDimensions(children:Array = null, withPadding:Boolean = true, usedSpace:Point = null):Point
+    protected function getChildSpace(child:Object, dimension:String):Number
     {
-      if(!target)
-        return new Point();
+      if(dimension == 'x')
+        return layoutUtil.getWidth(child);
+      if(dimension == 'y')
+        return layoutUtil.getHeight(child);
       
-      if(!usedSpace)
-        usedSpace = new Point();
+      return NaN;
+    }
+    
+    protected function setChildSpace(child:Object, dimension:String, value:Number):void
+    {
+      if(dimension == 'x')
+        layoutUtil.setSize(child, value, layoutUtil.getHeight(child));
+      else if(dimension == 'y')
+        layoutUtil.setSize(child, layoutUtil.getWidth(child), value);
+    }
+    
+    protected function getChildPercent(child:Object, dimension:String):Number
+    {
+      if(dimension == 'x')
+        return layoutUtil.getPercentWidth(child);
+      if(dimension == 'y')
+        return layoutUtil.getPercentHeight(child);
       
-      var size:Point = new Point(target.width, target.height);
+      return NaN;
+    }
+    
+    protected function getAlignment(child:Object, dimension:String):Number
+    {
+      var alignment:String = '';
       
-      if(withPadding)
+      if(dimension == 'x')
       {
-        size.x = size.x - padding.left - padding.right;
-        size.y = size.y - padding.top - padding.bottom;
+        alignment = styleUtil.getStyle(child, 'hAlign');
+        if(alignment === 'left')
+          return 0;
+        if(alignment === 'center')
+          return 0.5;
+        if(alignment === 'right')
+          return 1;
+      }
+      else if(dimension == 'y')
+      {
+        alignment = styleUtil.getStyle(child, 'vAlign');
+        if(alignment === 'top')
+          return 0;
+        if(alignment === 'middle')
+          return 0.5;
+        if(alignment === 'bottom')
+          return 1;
       }
       
-      return new Point(Math.min(size.x, size.x - usedSpace.x), Math.min(size.y, size.y - usedSpace.y));
+      return NaN;
     }
     
-    protected function getSpacePercent(totalSpace:Point, totalPercent:Point):Point
+    protected function getMargin(child:Object, dimension:String, which:Number = 0):Number
     {
-      return new Point(totalSpace.x / totalPercent.x, totalSpace.y / totalPercent.y);
-    }
-    
-    protected var excessSpace:Point = new Point();
-    
-    private function onMeasure():void
-    {
-      if(!target)
-        return;
+      var margin:Number = NaN;
       
-      var size:Point = measure(Utility.resolve(<>ILayoutUtility.getChildren</>, target));
-      
-      var width:Number = size.x;
-      var height:Number = size.y;
-      
-      if(target is IMeasurable)
+      if(dimension == 'x')
       {
-        width = isNaN(IMeasurable(target).explicitWidth) ? size.x : IMeasurable(target).explicitWidth;
-        height = isNaN(IMeasurable(target).explicitHeight) ? size.y : IMeasurable(target).explicitHeight;
+        margin = 0;
+        if(which <= 0)
+          margin += styleUtil.getStyle(child, 'marginLeft') || 0;
+        if(which >= 0)
+          margin += styleUtil.getStyle(child, 'marginRight') || 0;
+      }
+      else if(dimension == 'y')
+      {
+        margin = 0;
+        if(which <= 0)
+          margin += styleUtil.getStyle(child, 'marginTop') || 0;
+        if(which >= 0)
+          margin += styleUtil.getStyle(child, 'marginBottom') || 0;
       }
       
-      Utility.resolve(<>ILayoutUtility.setSize</>, target, width, height);
+      return margin;
     }
     
-    private function onLayout():void
+    protected function getLayoutPosition(child:Object, dimension:String, currentPosition:Number):Number
     {
-      if(!target)
-        return;
+      if(dimension == 'x')
+        return layoutUtil.getX(child);
+      if(dimension == 'y')
+        return layoutUtil.getY(child);
       
-      update(Utility.resolve(<>ILayoutUtility.getChildren</>, target));
+      return NaN;
+    }
+    
+    protected function updateLayoutPosition(child:Object, dimension:String, currentPosition:Number):Number
+    {
+      return currentPosition;
+    }
+    
+    protected function setLayoutPosition(child:Object, dimension:String, value:Number):void
+    {
+      if(dimension == 'x')
+        layoutUtil.setX(child, value);
+      if(dimension == 'y')
+        layoutUtil.setY(child, value);
+    }
+    
+    protected function getLayoutSpace(dimension:String, withPadding:Boolean = false, usedSpace:Number = 0, numChildren:int = 0):Number
+    {
+      var size:Number = 0;
+      
+      if(dimension == 'x')
+        size = target.width - (withPadding ? padding.left + padding.right : 0);
+      else if(dimension == 'y')
+        size = target.height - (withPadding ? padding.top + padding.bottom : 0);
+      
+      return size - usedSpace;
+    }
+    
+    protected function getLayoutPadding(dimension:String, which:Number = 0):Number
+    {
+      var value:Number = NaN;
+      
+      if(dimension == 'x')
+      {
+        value = 0;
+        if(which <= 0)
+          value += padding.left;
+        if(which >= 0)
+          value += padding.right;
+      }
+      else if(dimension == 'y')
+      {
+        value = 0;
+        if(which <= 0)
+          value += padding.top;
+        if(which >= 0)
+          value += padding.bottom;
+      }
+      
+      return value;
+    }
+    
+    protected function getSpacePerCent(totalSpace:Number, totalPercent:Number, dimension:String):Number
+    {
+      return totalSpace / Math.max(totalPercent, 100);
     }
     
     public function invalidate():void
@@ -273,10 +434,37 @@ package reflex.layouts
       // overriding by setting his size. For example, if this function is run
       // because the padding properties changed, we really only need to re-run the
       // layout phase.
-      if(isNaN(Utility.resolve(<>ILayoutUtility.getPercentWidth</>, target)) && isNaN(Utility.resolve(<>ILayoutUtility.getPercentHeight</>, target)))
+      if(isNaN(layoutUtil.getPercentWidth(target)) && isNaN(layoutUtil.getPercentHeight(target)))
         DisplayPhases.invalidateSize(target, listen(onMeasure, target));
       
       DisplayPhases.invalidateLayout(target, listen(onLayout, target));
+    }
+    
+    private function onMeasure():void
+    {
+      if(!target)
+        return;
+      
+      var size:Point = measure(layoutUtil.getChildren(target));
+      
+      var width:Number = size.x;
+      var height:Number = size.y;
+      
+      if(target is IMeasurable)
+      {
+        width = isNaN(IMeasurable(target).explicitWidth) ? size.x : IMeasurable(target).explicitWidth;
+        height = isNaN(IMeasurable(target).explicitHeight) ? size.y : IMeasurable(target).explicitHeight;
+      }
+      
+      layoutUtil.setSize(target, width, height);
+    }
+    
+    private function onLayout():void
+    {
+      if(!target)
+        return;
+      
+      update(layoutUtil.getChildren(target));
     }
     
     private function onPropertyChange(event:Event):void
@@ -295,6 +483,24 @@ package reflex.layouts
       }
       
       invalidate();
+    }
+    
+    private var layoutUtility:ILayoutUtility;
+    protected function get layoutUtil():ILayoutUtility
+    {
+      if(!layoutUtility)
+        layoutUtility = ILayoutUtility(Utility.getUtility(ILayoutUtility));
+      
+      return layoutUtility;
+    }
+    
+    private var styleUtility:IStyleUtility;
+    protected function get styleUtil():IStyleUtility
+    {
+      if(!styleUtility)
+        styleUtility = IStyleUtility(Utility.getUtility(IStyleUtility));
+      
+      return styleUtility;
     }
   }
 }

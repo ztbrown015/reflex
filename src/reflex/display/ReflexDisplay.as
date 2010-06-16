@@ -2,7 +2,7 @@
 {
   import flash.display.Sprite;
   
-  use namespace reflex;
+  use namespace rx_internal;
   
   /**
    * Modifies common DisplayObject properties for improved usability.
@@ -39,14 +39,15 @@
     override public function set width(value:Number):void
     {
       _explicitWidth = value;
+      _percentWidth = NaN;
     }
     
-    reflex function get $width():Number
+    rx_internal function get $width():Number
     {
       return super.width;
     }
     
-    reflex function set $width(value:Number):void
+    rx_internal function set $width(value:Number):void
     {
       super.width = value;
     }
@@ -63,14 +64,15 @@
     override public function set height(value:Number):void
     {
       _explicitHeight = value;
+      _percentHeight = NaN;
     }
     
-    reflex function get $height():Number
+    rx_internal function get $height():Number
     {
       return super.height;
     }
     
-    reflex function set $height(value:Number):void
+    rx_internal function set $height(value:Number):void
     {
       super.height = value;
     }

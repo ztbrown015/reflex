@@ -17,7 +17,7 @@
   import reflex.utilities.Utility;
   import reflex.utilities.states.IStateUtility;
   
-  use namespace reflex;
+  use namespace rx_internal;
   
   [Event(name="currentStateChanged", type="flash.events.Event")]
   [Event(name="behaviorsChanged", type="flash.events.Event")]
@@ -58,7 +58,7 @@
     }
     
     private var _behaviors:CompositeBehavior;
-    reflex var behaviorsChanged:Boolean = false;
+    rx_internal var behaviorsChanged:Boolean = false;
     [Bindable(event="behaviorsChanged")]
     [ArrayElementType("reflex.behaviors.IBehavior")]
     [Inspectable(name="Behaviors", type="Array")]
@@ -94,7 +94,7 @@
     }
     
     private var _currentState:String;
-    reflex var currentStateChanged:Boolean = false;
+    rx_internal var currentStateChanged:Boolean = false;
     [Bindable(event="currentStateChanged")]
     
     public function get currentState():String
@@ -134,7 +134,7 @@
     }
     
     private var _skin:Object;
-    reflex var skinChanged:Boolean = false;
+    rx_internal var skinChanged:Boolean = false;
     [Bindable(event="skinChanged")]
     [Inspectable(name="Skin", type="General")]
     
@@ -215,7 +215,7 @@
     }
     
     protected var _style:Object;
-    reflex var stylesChanged:Boolean = false;
+    rx_internal var stylesChanged:Boolean = false;
     
     public function get style():Object
     {

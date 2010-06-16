@@ -11,7 +11,7 @@ package reflex.display
   import reflex.skins.ISkin;
   import reflex.utilities.listen;
   
-  use namespace reflex;
+  use namespace rx_internal;
   
   // Default property that MXML sets when you define children MXML nodes.
   [DefaultProperty("children")]
@@ -45,7 +45,7 @@ package reflex.display
     }
     
     private var _children:Array = [];
-    reflex var childrenChanged:Boolean = false;
+    rx_internal var childrenChanged:Boolean = false;
     
     [Bindable(event="childrenChanged")]
     [ArrayElementType("Object")]
@@ -69,7 +69,7 @@ package reflex.display
     }
     
     private var _layout:ILayout;
-    reflex var layoutChanged:Boolean = false;
+    rx_internal var layoutChanged:Boolean = false;
     
     [Bindable(event="layoutChanged")]
     
@@ -124,9 +124,19 @@ package reflex.display
         invalidateSize();
     }
     
+    override public function setSize(newWidth:Number, newHeight:Number):void
+    {
+      var changed:Boolean = (newWidth != _width) || (newHeight != _height);
+      
+      super.setSize(newWidth, newHeight);
+      
+      if(changed)
+        invalidateLayout();
+    }
+    
     public function invalidateNotifications():void
     {
-      trace('Container invalidateNotifications');
+//      trace('Container invalidateNotifications');
       
       DisplayPhases.invalidateNotifications(this);
     }
@@ -138,7 +148,7 @@ package reflex.display
      */
     protected function onNotifyPhase():void
     {
-      trace('Container notify phase');
+//      trace('Container notify phase');
       
       if(childrenChanged)
         dispatchEvent(new Event("childrenChanged"));
@@ -151,14 +161,14 @@ package reflex.display
     
     public function invalidateChildren():void
     {
-      trace('Container invalidateChildren');
+//      trace('Container invalidateChildren');
       
       DisplayPhases.invalidateChildren(this);
     }
     
     protected function onChildrenPhase():void
     {
-      trace('Container children phase');
+//      trace('Container children phase');
       
       var copy:Array = children.concat();
       var child:Object;
@@ -177,16 +187,16 @@ package reflex.display
     
     public function invalidateSize():void
     {
-      trace('Container invalidateSize');
+//      trace('Container invalidateSize');
       
       DisplayPhases.invalidateSize(this);
     }
     
     protected function onMeasurePhase():void
     {
-      trace('Container measure phase');
+//      trace('Container measure phase');
       
-      // Don't bother sizing if we've got an explicitWidth and explicitHeight -- it's not allowed to change.
+      // Don't bother measuring if we've got an explicitWidth and explicitHeight -- it's not allowed to change.
       if(!isNaN(explicitWidth) && !isNaN(explicitHeight))
       {
         _width = explicitWidth;
@@ -212,14 +222,14 @@ package reflex.display
     
     public function invalidateLayout():void
     {
-      trace('Container invalidateLayout');
+//      trace('Container invalidateLayout');
       
       DisplayPhases.invalidateLayout(this);
     }
     
     protected function onLayoutPhase():void
     {
-      trace('Container layout phase');
+//      trace('Container layout phase');
       
       graphics.clear();
       

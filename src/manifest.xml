@@ -27,6 +27,9 @@
 	<component id="BasicLayout" class="reflex.layouts.BasicLayout"/>
 	<component id="VerticalLayout" class="reflex.layouts.VerticalLayout"/>
 	<component id="HorizontalLayout" class="reflex.layouts.HorizontalLayout"/>
+	<component id="Padding" class="reflex.layouts.Padding"/>
+	<component id="Dimension" class="reflex.layouts.Dimension"/>
+	<component id="Virtual" class="reflex.layouts.Virtual"/>
 	
 	<!-- measurement -->
 	<!--component id="Measurements" class="reflex.measurement.Measurements"/-->
