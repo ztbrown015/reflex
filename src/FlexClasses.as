@@ -13,7 +13,7 @@ package
 	{
 		import mx.core.IMXMLObject;						IMXMLObject;
 		import mx.core.IFlexModuleFactory;				IFlexModuleFactory;
-    import mx.core.IStateClient2; IStateClient2;
+//    import mx.core.IStateClient2; IStateClient2;
     
 		//import mx.collections.IList;					IList;
 		

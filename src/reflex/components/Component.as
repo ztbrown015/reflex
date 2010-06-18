@@ -28,9 +28,9 @@
   [Style(name="right", type="Object")]
   [Style(name="top", type="Object")]
   [Style(name="bottom", type="Object")]
+  [Style(name="dock", type="Boolean")]
   [Style(name="horizontalCenter", type="Number")]
   [Style(name="verticalCenter", type="Number")]
-  [Style(name="dock", type="Boolean")]
   
   [Style(name="vAlign", type="String", enumeration="top,middle,bottom")]
   [Style(name="hAlign", type="String", enumeration="left,center,right")]
@@ -58,7 +58,6 @@
     }
     
     private var _behaviors:CompositeBehavior;
-    rx_internal var behaviorsChanged:Boolean = false;
     [Bindable(event="behaviorsChanged")]
     [ArrayElementType("reflex.behaviors.IBehavior")]
     [Inspectable(name="Behaviors", type="Array")]
@@ -88,13 +87,10 @@
       behaviors.clear();
       behaviors.add(values);
       
-      behaviorsChanged = true;
-      
-      invalidateNotifications();
+      invalidateNotifications('behaviorsChanged');
     }
     
     private var _currentState:String;
-    rx_internal var currentStateChanged:Boolean = false;
     [Bindable(event="currentStateChanged")]
     
     public function get currentState():String
@@ -111,9 +107,7 @@
       
       _currentState = value;
       
-      currentStateChanged = true;
-      
-      invalidateNotifications();
+      invalidateNotifications('currentStateChanged');
     }
     
     private var _states:Array;
@@ -156,9 +150,7 @@
       if(skin)
         attachSkin(skin);
       
-      skinChanged = true;
-      
-      invalidateNotifications();
+      invalidateNotifications('skinChanged');
     }
     
     public function addSkinPart(part:Object, name:String):Object
@@ -215,7 +207,6 @@
     }
     
     protected var _style:Object;
-    rx_internal var stylesChanged:Boolean = false;
     
     public function get style():Object
     {
@@ -224,35 +215,31 @@
     
     public function set style(styleObject:Object):void
     {
-      if(_style === styleObject)
+      if(style === styleObject)
         return;
       
-      if(!_style)
+      if(!style)
         _style = styleObject;
       else
         _style['style'] = styleObject;
       
-      stylesChanged = true;
-      
-      invalidateNotifications();
+      invalidateNotifications('stylesChanged');
     }
     
     public function clearStyle(styleProp:String):Boolean
     {
       var oldValue:* = getStyle(styleProp);
       
-      stylesChanged = true;
-      
       dispatchEvent(new PropertyChangeEvent('stylesChanged', false, false, PropertyChangeEventKind.DELETE, styleProp, oldValue, undefined, this));
       
-      invalidateNotifications();
+      invalidateNotifications('stylesChanged');
       
-      return delete _style[styleProp];
+      return delete style[styleProp];
     }
     
     public function getStyle(styleProp:String):*
     {
-      return _style[styleProp];
+      return style[styleProp];
     }
     
     public function setStyle(styleProp:String, newValue:*):void
@@ -263,30 +250,7 @@
       
       dispatchEvent(new PropertyChangeEvent('stylesChanged', false, false, PropertyChangeEventKind.UPDATE, styleProp, oldValue, newValue, this));
       
-      stylesChanged = true;
-      
-      invalidateNotifications();
-    }
-    
-    override protected function onNotifyPhase():void
-    {
-      super.onNotifyPhase();
-      
-      if(stylesChanged)
-        dispatchEvent(new Event("stylesChanged"));
-      stylesChanged = false;
-      
-      if(behaviorsChanged)
-        dispatchEvent(new Event("behaviorsChanged"));
-      behaviorsChanged = false;
-      
-      if(skinChanged)
-        dispatchEvent(new Event("skinChanged"));
-      skinChanged = false;
-      
-      if(currentStateChanged)
-        dispatchEvent(new Event("currentStateChanged"));
-      currentStateChanged = false;
+      invalidateNotifications('stylesChanged');
     }
     
     protected function onStylesChanged(event:Event):void

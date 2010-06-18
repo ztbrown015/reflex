@@ -62,14 +62,11 @@ package reflex.display
       
       _children = [].concat(values);
       
-      childrenChanged = true;
-      
-      invalidateNotifications();
+      invalidateNotifications('childrenChanged');
       invalidateChildren();
     }
     
     private var _layout:ILayout;
-    rx_internal var layoutChanged:Boolean = false;
     
     [Bindable(event="layoutChanged")]
     
@@ -91,9 +88,7 @@ package reflex.display
       if(layout)
         applyLayout(layout);
       
-      layoutChanged = true;
-      
-      invalidateNotifications();
+      invalidateNotifications('layoutChanged');
       invalidateSize();
       invalidateLayout();
     }
@@ -134,13 +129,17 @@ package reflex.display
         invalidateLayout();
     }
     
-    public function invalidateNotifications():void
+    protected var invalidatedProperties:Object = {};
+    
+    public function invalidateNotifications(changedNotification:String = null):void
     {
 //      trace('Container invalidateNotifications');
       
+      if(changedNotification)
+        invalidatedProperties[changedNotification] = true;
+      
       DisplayPhases.invalidateNotifications(this);
     }
-    
     /**
      * Synchronizes dispatching the binding events so that anyone who cares
      * (such as Behaviors) will update and calculate only once per frame.
@@ -150,13 +149,11 @@ package reflex.display
     {
 //      trace('Container notify phase');
       
-      if(childrenChanged)
-        dispatchEvent(new Event("childrenChanged"));
-      childrenChanged = false;
-      
-      if(layoutChanged)
-        dispatchEvent(new Event("layoutChanged"));
-      layoutChanged = false;
+      for(var changedNotification:String in invalidatedProperties)
+      {
+        dispatchEvent(new Event(changedNotification));
+        delete invalidatedProperties[changedNotification];
+      }
     }
     
     public function invalidateChildren():void

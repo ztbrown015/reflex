@@ -40,10 +40,6 @@ package reflex.layouts
       Utility.resolve(<>IMetadataUtility.resolveEventListeners</>, this);
       Utility.resolve(<>IMetadataUtility.resolvePropertyListeners</>, this);
       
-      padding.addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
-      addEventListener(PropertyChangeEvent.PROPERTY_CHANGE, onPropertyChange);
-      addEventListener('stylesChanged', onStylesChanged);
-      
       this.target = target;
     }
     
@@ -96,16 +92,12 @@ package reflex.layouts
     
     protected function detachFrom(target:DisplayObjectContainer):void
     {
-      target.removeEventListener("stylesChanged", onPropertyChange);
-      
       virtual.removeDimension('x');
       virtual.removeDimension('y');
     }
     
     protected function attachTo(target:DisplayObjectContainer):void
     {
-      target.addEventListener("stylesChanged", onPropertyChange);
-      
       //Copy any cached style values over to the new target instance.
       if(styles && style)
         for(var styleProp:String in styles)
@@ -122,7 +114,15 @@ package reflex.layouts
     
     public function measure(children:Array):Point
     {
-      return new Point();
+      var point:Point = new Point(0, 0);
+      
+      for each(var item:Object in children)
+      {
+        point.x = Math.max(point.x, Utility.resolve(<>ILayoutUtility.getWidth</>, item));
+        point.y = Math.max(point.y, Utility.resolve(<>ILayoutUtility.getHeight</>, item));
+      }
+      
+      return point;
     }
     
     private var _virtual:Virtual;
@@ -141,7 +141,6 @@ package reflex.layouts
         return;
       
       _virtual = value;
-      invalidate();
     }
     
     public function update(children:Array):void
@@ -261,9 +260,11 @@ package reflex.layouts
           childSpace = getChildSpace(child, dimension);
           
           if(index == 0)
-            position = getLayoutPadding(dimension, -1) + excessSpace * (getAlignment(child, dimension) || 0);
+            position = getLayoutPadding(dimension, -1) + excessSpace * (getAlignment(this, dimension) || 0);
           
           childPosition = getLayoutPosition(child, dimension, position);
+          
+          trace(child + ", " + dimension + ", " + childSpace + ", " + childPosition);
           
           setLayoutPosition(child, dimension, childPosition);
           
@@ -425,67 +426,8 @@ package reflex.layouts
       return totalSpace / Math.max(totalPercent, 100);
     }
     
-    public function invalidate():void
-    {
-      if(!target)
-        return;
-      
-      // Make sure this guy doesn't have a percentWidth/percentHeight that we're 
-      // overriding by setting his size. For example, if this function is run
-      // because the padding properties changed, we really only need to re-run the
-      // layout phase.
-      if(isNaN(layoutUtil.getPercentWidth(target)) && isNaN(layoutUtil.getPercentHeight(target)))
-        DisplayPhases.invalidateSize(target, listen(onMeasure, target));
-      
-      DisplayPhases.invalidateLayout(target, listen(onLayout, target));
-    }
-    
-    private function onMeasure():void
-    {
-      if(!target)
-        return;
-      
-      var size:Point = measure(layoutUtil.getChildren(target));
-      
-      var width:Number = size.x;
-      var height:Number = size.y;
-      
-      if(target is IMeasurable)
-      {
-        width = isNaN(IMeasurable(target).explicitWidth) ? size.x : IMeasurable(target).explicitWidth;
-        height = isNaN(IMeasurable(target).explicitHeight) ? size.y : IMeasurable(target).explicitHeight;
-      }
-      
-      layoutUtil.setSize(target, width, height);
-    }
-    
-    private function onLayout():void
-    {
-      if(!target)
-        return;
-      
-      update(layoutUtil.getChildren(target));
-    }
-    
-    private function onPropertyChange(event:Event):void
-    {
-      invalidate();
-    }
-    
-    protected function onStylesChanged(event:PropertyChangeEvent):void
-    {
-      var styleProp:String = event.property.toString();
-      
-      if(styleProp.indexOf("padding") > 0)
-      {
-        var prop:String = String(styleProp.split('padding').pop()).toLowerCase();
-        padding[prop] = getStyle(styleProp);
-      }
-      
-      invalidate();
-    }
-    
     private var layoutUtility:ILayoutUtility;
+    
     protected function get layoutUtil():ILayoutUtility
     {
       if(!layoutUtility)
@@ -495,6 +437,7 @@ package reflex.layouts
     }
     
     private var styleUtility:IStyleUtility;
+    
     protected function get styleUtil():IStyleUtility
     {
       if(!styleUtility)

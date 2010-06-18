@@ -83,7 +83,7 @@ package reflex.utilities.invalidation
     private function invalidateStage(stage:Stage):void
     {
       invalidStages[stage] = true;
-      stage.addEventListener(Event.RENDER, onRender, false, 0xF, true);
+      stage.addEventListener(Event.ENTER_FRAME, onRender, false, 0xF, true);
       stage.addEventListener(Event.RESIZE, onRender, false, 0xF, true);
       stage.invalidate();
     }
@@ -92,7 +92,7 @@ package reflex.utilities.invalidation
     {
       for(var stage:* in invalidStages)
       {
-        IEventDispatcher(stage).removeEventListener(Event.RENDER, onRender);
+        IEventDispatcher(stage).removeEventListener(Event.ENTER_FRAME, onRender);
         IEventDispatcher(stage).removeEventListener(Event.RESIZE, onRender);
       }
     }

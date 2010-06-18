@@ -136,32 +136,15 @@ package reflex.styles
     
     override flash_proxy function setProperty(name:*, value:*):void
     {
-      try
-      {
-        if(name in propertiesMap)
-          this[name] = value;
-        else if(!(name is QName))
-          setStyle(name, value);
-      }
-      catch(e:Error)
-      {
-        setStyle(name, value);
-      }
+      (name in this) ? this[name] = value : setStyle(name, value);
     }
     
     override flash_proxy function getProperty(name:*):*
     {
-      try
-      {
-        if(name in this)
-          return this[name];
-        
-        return getStyle(name);
-      }
-      catch(e:Error)
-      {
-        return getStyle(name);
-      }
+      if(name in this)
+        return this[name];
+      
+      return getStyle(name);
     }
     
     override flash_proxy function hasProperty(name:*):Boolean

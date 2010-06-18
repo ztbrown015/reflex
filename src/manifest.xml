@@ -46,6 +46,6 @@
 	<!-- <component id="ListEvent" class="flight.events.ListEvent"/> -->
 	
 	<!-- flex dependencies -->
-	<!-- <component id="FlexClasses" class="FlexClasses"/> -->
+	<component id="FlexClasses" class="FlexClasses"/>
 	
 </componentPackage>

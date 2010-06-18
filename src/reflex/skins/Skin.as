@@ -20,7 +20,7 @@ package reflex.skins
    * adding children to the Sprite, or both.
    * @alpha
    */
-  public class Skin extends EventDispatcher implements ISkin/*, IStateClient2*/ //, IMeasurable
+  public class Skin extends EventDispatcher implements ISkin, IStateClient2 //, IMeasurable
   {
     public function Skin()
     {
@@ -66,6 +66,13 @@ package reflex.skins
     
     [Bindable]
     public var states:Array;
+    [Bindable]
+    public var transitions:Array;
+    
+    public function hasState(state:String):Boolean
+    {
+      return true;
+    }
     
     private var _target:Sprite;
     

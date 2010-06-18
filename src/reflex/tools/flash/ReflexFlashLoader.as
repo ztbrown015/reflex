@@ -53,14 +53,17 @@ package reflex.tools.flash
       stage.align = StageAlign.TOP_LEFT;
       stage.scaleMode = StageScaleMode.NO_SCALE;
       stage.addEventListener(Event.RESIZE, onStageResize);
+      graphics.clear();
+      graphics.beginFill(0, 0);
+      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
       onStageResize(null);
     }
     
     protected function onStageResize(event:Event):void
     {
-      graphics.clear();
-      graphics.beginFill(0, 0);
-      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+//      graphics.clear();
+//      graphics.beginFill(0, 0);
+//      graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
 //      width = stage.stageWidth;
 //      height = stage.stageHeight;
     }

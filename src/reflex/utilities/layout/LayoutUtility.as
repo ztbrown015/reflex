@@ -72,10 +72,8 @@ package reflex.utilities.layout
       if(!object)
         return NaN;
       
-      if('percentWidth' in object && total > 0)
-        return object['percentWidth'] * total;
-      else if(total == 0)
-        return object['percentWidth'];
+      if('percentWidth' in object)
+        return total > 0 ? object['percentWidth'] * total : object['percentWidth'];
       
       return NaN;
     }
@@ -85,10 +83,8 @@ package reflex.utilities.layout
       if(!object)
         return NaN;
       
-      if('percentHeight' in object && total > 0)
-        return object['percentHeight'] * total;
-      else if(total == 0)
-        return object['percentHeight'];
+      if('percentHeight' in object)
+        return total > 0 ? object['percentHeight'] * total : object['percentHeight'];
       
       return NaN;
     }

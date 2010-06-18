@@ -6,5 +6,10 @@ package mx.core
   {
     function get states():Array;
     function set states(value:Array):void;
+    
+    function get transitions():Array;
+    function set transitions(value:Array):void;
+    
+    function hasState(state:String):Boolean;
   }
 }

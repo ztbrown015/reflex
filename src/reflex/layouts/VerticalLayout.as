@@ -78,7 +78,7 @@ package reflex.layouts
         var childWidth:Number = getChildSpace(child, dimension);
         var alignment:Number = getAlignment(child, dimension);
         alignment = isNaN(alignment) ? getAlignment(this, dimension) || 0 : alignment;
-        
+      
         return padding.left + getMargin(child, dimension, -1) + ((layoutWidth - childWidth - padding.left - padding.right) * alignment);
       }
       
