@@ -20,7 +20,7 @@ package reflex.skins
    * adding children to the Sprite, or both.
    * @alpha
    */
-  public class Skin extends EventDispatcher implements ISkin, IStateClient2 //, IMeasurable
+  public class Skin extends EventDispatcher implements ISkin, IStateClient2
   {
     public function Skin()
     {

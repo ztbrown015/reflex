@@ -1,17 +1,17 @@
 package reflex.utilities.metadata
 {
-  import flash.events.IEventDispatcher;
-  
+    import flash.events.IEventDispatcher;
+    
 //  import flight.binding.Bind;
 //  import flight.utils.Type;
-
-  public class MetadataUtility
-  {
-    /**
-     * @experimental
-     */
-    public function resolveBindings(instance:IEventDispatcher):void
+    
+    public class MetadataUtility implements IMetadataUtility
     {
+        /**
+         * @experimental
+         */
+        public function resolveBindings(instance:IEventDispatcher):void
+        {
 //      var desc:XMLList = Type.describeProperties(instance, "Binding");
 //      for each(var prop:XML in desc)
 //      {
@@ -25,13 +25,13 @@ package reflex.utilities.metadata
 //          Bind.addBinding(instance, targ, instance, prop.@name, true);
 //        }
 //      }
-    }
-    
-    /**
-     * @experimental
-     */
-    public function resolveCommitProperties(instance:IEventDispatcher):void
-    {
+        }
+        
+        /**
+         * @experimental
+         */
+        public function resolveCommitProperties(instance:IEventDispatcher):void
+        {
 //      var desc:XMLList = Type.describeMethods(instance, "CommitProperties");
 //      for each(var meth:XML in desc)
 //      {
@@ -47,13 +47,13 @@ package reflex.utilities.metadata
 //          Bind.addListener(instance, instance[meth.@name], instance, targ);
 //        }
 //      }
-    }
-    
-    /**
-     * @experimental
-     */
-    public function resolveEventListeners(instance:IEventDispatcher):void
-    {
+        }
+        
+        /**
+         * @experimental
+         */
+        public function resolveEventListeners(instance:IEventDispatcher):void
+        {
 //      var desc:XMLList = Type.describeMethods(instance, "EventListener");
 //      for each(var meth:XML in desc)
 //      {
@@ -70,14 +70,14 @@ package reflex.utilities.metadata
 //          Bind.bindEventListener(type, instance[meth.@name], instance, targ);
 //        }
 //      }
-    }
-    
-    // this method of listening for layout invalidating changes is very much experimental
-    /**
-     * @experimental
-     */
-    public function resolveLayoutProperties(instance:IEventDispatcher, child:IEventDispatcher, listener:Function):void
-    {
+        }
+        
+        // this method of listening for layout invalidating changes is very much experimental
+        /**
+         * @experimental
+         */
+        public function resolveLayoutProperties(instance:IEventDispatcher, child:IEventDispatcher, listener:Function):void
+        {
 //      var desc:XML = Type.describeType(instance);
 //      for each(var meth:XML in desc.factory[0])
 //      {
@@ -90,13 +90,13 @@ package reflex.utilities.metadata
 //          Bind.addListener(child, listener, child, sourcePath);
 //        }
 //      }
-    }
-    
-    /**
-     * @experimental
-     */
-    public function resolvePropertyListeners(instance:IEventDispatcher):void
-    {
+        }
+        
+        /**
+         * @experimental
+         */
+        public function resolvePropertyListeners(instance:IEventDispatcher):void
+        {
 //      var desc:XMLList = Type.describeMethods(instance, "PropertyListener");
 //      for each(var meth:XML in desc)
 //      {
@@ -112,6 +112,6 @@ package reflex.utilities.metadata
 //          Bind.addListener(instance, instance[meth.@name], instance, targ);
 //        }
 //      }
+        }
     }
-  }
 }

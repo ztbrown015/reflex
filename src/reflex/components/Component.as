@@ -14,8 +14,6 @@
   import reflex.skins.ISkinnable;
   import reflex.styles.IStyleAware;
   import reflex.styles.StyleAwareActor;
-  import reflex.utilities.Utility;
-  import reflex.utilities.states.IStateUtility;
   
   use namespace rx_internal;
   
@@ -103,7 +101,7 @@
       if(_currentState == value)
         return;
       
-      Utility.resolve(<>IStateUtility.change</>, this, _currentState, value);
+//      Utility.resolve(<>IStateUtility.change</>, this, _currentState, value);
       
       _currentState = value;
       

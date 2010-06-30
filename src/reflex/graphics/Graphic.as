@@ -102,7 +102,7 @@ package reflex.graphics
     
     protected function renderGraphic():void
     {
-      trace('Graphic renderGraphic');
+//      trace('Graphic renderGraphic');
     }
     
     public function get g():Graphics

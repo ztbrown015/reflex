@@ -264,8 +264,6 @@ package reflex.layouts
           
           childPosition = getLayoutPosition(child, dimension, position);
           
-          trace(child + ", " + dimension + ", " + childSpace + ", " + childPosition);
-          
           setLayoutPosition(child, dimension, childPosition);
           
           virtual.addAt(child, childPosition, childSpace, dimension);
